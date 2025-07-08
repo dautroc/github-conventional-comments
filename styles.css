@@ -1,0 +1,40 @@
+#conventional-comment-popup {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
+  z-index: 100; /* High z-index to appear over GitHub's UI */
+  min-width: 300px;
+  max-width: 400px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+#conventional-comment-popup ul {
+  list-style: none;
+  padding: 4px;
+  margin: 0;
+}
+
+#conventional-comment-popup li {
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: block;
+}
+
+#conventional-comment-popup li:hover {
+  background-color: #f6f8fa;
+}
+
+/* Style for the currently selected item */
+#conventional-comment-popup li.active {
+  background-color: #0969da;
+  color: white;
+}
+
+#conventional-comment-popup li strong {
+  font-weight: 600;
+  margin-right: 8px;
+}
