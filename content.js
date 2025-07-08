@@ -49,7 +49,13 @@ document.addEventListener('keyup', (e) => {
     return;
   }
 
-  const target = e.target;
+  const target = document.activeElement;
+
+  if (!target) {
+    cleanup();
+    return;
+  }
+
   const isTextarea = target.tagName.toLowerCase() === 'textarea';
   const isContentEditable = target.isContentEditable;
 
@@ -70,7 +76,7 @@ document.addEventListener('keyup', (e) => {
 
   triggerIndex = textBeforeCursor.lastIndexOf('!');
 
-  if (triggerIndex === -1) {
+  if (triggerIndex !== 0) {
     cleanup();
     return;
   }
