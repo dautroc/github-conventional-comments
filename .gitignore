@@ -6,7 +6,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build output
-extension/
+extension
 
 # OS generated files
 .DS_Store
