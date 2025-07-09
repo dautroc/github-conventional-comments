@@ -2,10 +2,12 @@ const commentTypes = [
   { label: 'praise', description: 'Highlights something positive.' },
   { label: 'nitpick', description: 'A minor, non-critical issue.' },
   { label: 'suggestion', description: 'Suggests a specific improvement.' },
+  { label: 'issue', description: 'Highlights a problem with the subject under review.' },
+  { label: 'todo', description: 'A small, trivial, but necessary change.' },
   { label: 'question', description: 'Asks for clarification.' },
-  { label: 'thought', description: 'A thought process or exploration of ideas.' },
-  { label: 'chore', description: 'A small, necessary task or cleanup.' },
-  { label: 'issue', description: 'Links to a new or existing issue.' },
+  { label: 'thought', description: 'Represents an idea that popped up from reviewing.' },
+  { label: 'chore', description: 'A simple task that must be done before the subject can be "officially" accepted.' },
+  { label: 'note', description: 'Highlights something the reader should take note of.' },
 ];
 
 const conventionalComments = [];
