@@ -10,27 +10,27 @@ const commentTypes = [
   { label: 'note', description: 'Highlights something the reader should take note of.' },
 ];
 
-const conventionalComments = [];
-commentTypes.forEach(type => {
-  conventionalComments.push({
-    label: `${type.label} (non-blocking)`,
-    description: type.description,
-    snippet: `**${type.label} (non-blocking):** `
-  });
-  conventionalComments.push({
-    label: `${type.label} (blocking)`,
-    description: type.description,
-    snippet: `**${type.label} (blocking):** `
-  });
-});
+const decorations = [
+  { label: '(non-blocking)', description: 'Should not prevent the subject from being accepted.' },
+  { label: '(blocking)', description: 'Should prevent the subject from being accepted until resolved.' },
+  { label: '(if-minor)', description: 'Resolve only if the changes end up being minor or trivial.' },
+];
+
+const STAGE = {
+  INACTIVE: 0,
+  SELECTING_LABEL: 1,
+  SELECTING_DECORATION: 2,
+};
 
 let activeEditor = null;
 let suggestionsPopup = null;
 let activeSuggestionIndex = 0;
 let triggerIndex = -1;
+let currentStage = STAGE.INACTIVE;
+let selectedLabel = '';
 
 document.addEventListener('keydown', (e) => {
-  if (!suggestionsPopup) return;
+  if (currentStage === STAGE.INACTIVE) return;
 
   if ((e.key === 'ArrowDown') || (e.key === 'j' && e.ctrlKey)) {
     e.preventDefault();
@@ -40,113 +40,79 @@ document.addEventListener('keydown', (e) => {
     updateActiveSuggestion(-1);
   } else if (e.key === 'Enter') {
     e.preventDefault();
-    selectSuggestion();
+    handleEnter();
   } else if (e.key === 'Escape') {
-    cleanup();
+    e.preventDefault();
+    handleEscape();
   }
 });
 
 document.addEventListener('keyup', (e) => {
-  if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape' || e.key === 'Control' || e.ctrlKey) {
-    return;
-  }
+  if (currentStage !== STAGE.INACTIVE) return;
+  if (e.key !== '!') return;
 
   const target = document.activeElement;
-
-  if (!target) {
-    cleanup();
-    return;
-  }
+  if (!target) return;
 
   const isTextarea = target.tagName.toLowerCase() === 'textarea';
   const isContentEditable = target.isContentEditable;
-
-  if (!isTextarea && !isContentEditable) {
-    cleanup();
-    return;
-  }
+  if (!isTextarea && !isContentEditable) return;
 
   activeEditor = target;
+  const { text } = getEditorState(activeEditor);
 
-  const { text, cursorPosition } = getEditorState(activeEditor);
-  if (cursorPosition === null) {
-    cleanup();
-    return;
+  if (text.trim() === '!') {
+    triggerIndex = text.indexOf('!');
+    currentStage = STAGE.SELECTING_LABEL;
+    showSuggestions(commentTypes);
   }
+});
 
-  const textBeforeCursor = text.substring(0, cursorPosition);
+function handleEnter() {
+  const items = suggestionsPopup.querySelectorAll('li');
+  const selectedItem = items[activeSuggestionIndex];
+  if (!selectedItem) return;
 
-  triggerIndex = textBeforeCursor.lastIndexOf('!');
-
-  if (triggerIndex !== 0) {
-    cleanup();
-    return;
+  if (currentStage === STAGE.SELECTING_LABEL) {
+    selectedLabel = selectedItem.dataset.label;
+    currentStage = STAGE.SELECTING_DECORATION;
+    showSuggestions(decorations);
+  } else if (currentStage === STAGE.SELECTING_DECORATION) {
+    const selectedDecoration = selectedItem.dataset.label;
+    const snippet = `**${selectedLabel} ${selectedDecoration}:** `;
+    insertSnippet(snippet);
   }
+}
 
-  const query = textBeforeCursor.substring(triggerIndex + 1);
-
-  if (/\s/.test(query)) {
-    cleanup();
-    return;
-  }
-
-  const filteredComments = conventionalComments.filter(c => c.label.startsWith(query.toLowerCase()));
-
-  if (filteredComments.length > 0) {
-    showSuggestions(filteredComments);
+function handleEscape() {
+  if (currentStage === STAGE.SELECTING_DECORATION) {
+    const snippet = `**${selectedLabel}:** `;
+    insertSnippet(snippet);
   } else {
     cleanup();
   }
-});
-
-document.addEventListener('click', (e) => {
-  if (suggestionsPopup && !suggestionsPopup.contains(e.target)) {
-    cleanup();
-  }
-});
-
-function getEditorState(editor) {
-    if (editor.isContentEditable) {
-        const selection = window.getSelection();
-        if (selection.rangeCount === 0) return { text: editor.textContent, cursorPosition: null };
-        const range = selection.getRangeAt(0);
-        return { text: editor.textContent, cursorPosition: range.startOffset };
-    } else {
-        return { text: editor.value, cursorPosition: editor.selectionStart };
-    }
 }
 
-function selectSuggestion() {
-  const selectedItem = suggestionsPopup.querySelector('li.active');
-  if (!selectedItem || !activeEditor) {
-    cleanup();
-    return;
-  }
-
-  const snippet = selectedItem.dataset.snippet;
+function insertSnippet(snippet) {
+  const { cursorPosition } = getEditorState(activeEditor);
 
   if (activeEditor.isContentEditable) {
     const selection = window.getSelection();
     const range = selection.getRangeAt(0);
-
     range.setStart(range.startContainer, triggerIndex);
-    range.setEnd(range.startContainer, getEditorState(activeEditor).cursorPosition);
-
+    range.setEnd(range.startContainer, cursorPosition);
     range.deleteContents();
     const textNode = document.createTextNode(snippet);
     range.insertNode(textNode);
-
     range.setStartAfter(textNode);
     range.collapse(true);
     selection.removeAllRanges();
     selection.addRange(range);
   } else {
-    const { value, selectionStart } = activeEditor;
+    const { value } = activeEditor;
     const textBefore = value.substring(0, triggerIndex);
-    const textAfter = value.substring(selectionStart);
-
+    const textAfter = value.substring(cursorPosition);
     activeEditor.value = textBefore + snippet + textAfter;
-
     const newCursorPos = triggerIndex + snippet.length;
     activeEditor.selectionStart = newCursorPos;
     activeEditor.selectionEnd = newCursorPos;
@@ -157,7 +123,25 @@ function selectSuggestion() {
   cleanup();
 }
 
-function showSuggestions(comments) {
+document.addEventListener('click', (e) => {
+  if (suggestionsPopup && !suggestionsPopup.contains(e.target)) {
+    cleanup();
+  }
+});
+
+function getEditorState(editor) {
+  if (!editor) return { text: '', cursorPosition: 0 };
+  if (editor.isContentEditable) {
+    const selection = window.getSelection();
+    if (selection.rangeCount === 0) return { text: editor.textContent, cursorPosition: editor.textContent.length };
+    const range = selection.getRangeAt(0);
+    return { text: editor.textContent, cursorPosition: range.startOffset };
+  } else {
+    return { text: editor.value, cursorPosition: editor.selectionStart };
+  }
+}
+
+function showSuggestions(items) {
   if (!suggestionsPopup) {
     suggestionsPopup = document.createElement('div');
     suggestionsPopup.id = 'conventional-comment-popup';
@@ -167,9 +151,9 @@ function showSuggestions(comments) {
   activeSuggestionIndex = 0;
   suggestionsPopup.innerHTML = `
     <ul>
-      ${comments.map((comment, index) => `
-        <li class="${index === activeSuggestionIndex ? 'active' : ''}" data-snippet="${comment.snippet}">
-          <strong>${comment.label}</strong>: ${comment.description}
+      ${items.map((item, index) => `
+        <li class="${index === 0 ? 'active' : ''}" data-label="${item.label}">
+          <strong>${item.label}</strong>: ${item.description}
         </li>
       `).join('')}
     </ul>
@@ -178,7 +162,7 @@ function showSuggestions(comments) {
   suggestionsPopup.querySelectorAll('li').forEach((item, index) => {
     item.addEventListener('click', () => {
       activeSuggestionIndex = index;
-      selectSuggestion();
+      handleEnter();
     });
   });
 
@@ -195,10 +179,10 @@ function updateActiveSuggestion(direction) {
 }
 
 function positionPopup() {
-    if (!activeEditor || !suggestionsPopup) return;
-    const rect = activeEditor.getBoundingClientRect();
-    suggestionsPopup.style.top = `${window.scrollY + rect.bottom + 5}px`;
-    suggestionsPopup.style.left = `${window.scrollX + rect.left}px`;
+  if (!activeEditor || !suggestionsPopup) return;
+  const rect = activeEditor.getBoundingClientRect();
+  suggestionsPopup.style.top = `${window.scrollY + rect.bottom + 5}px`;
+  suggestionsPopup.style.left = `${window.scrollX + rect.left}px`;
 }
 
 function cleanup() {
@@ -209,4 +193,6 @@ function cleanup() {
   activeSuggestionIndex = 0;
   triggerIndex = -1;
   activeEditor = null;
+  currentStage = STAGE.INACTIVE;
+  selectedLabel = '';
 }
