@@ -41,20 +41,18 @@ document.addEventListener('keydown', (e) => {
     updateActiveSuggestion(-1);
   } else if (e.key === 'Enter') {
     e.preventDefault();
+    e.stopImmediatePropagation();
     handleEnter();
   } else if (e.key === 'Escape') {
     e.preventDefault();
     handleEscape();
   }
-});
+}, true);
 
-document.addEventListener('keyup', (e) => {
+document.addEventListener('input', (e) => {
   if (currentStage === STAGE.SELECTING_DECORATION) return;
-  if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape' || e.key === 'Control' || e.ctrlKey) {
-    return;
-  }
 
-  const target = document.activeElement;
+  const target = e.target;
   if (!target) {
     cleanup();
     return;
