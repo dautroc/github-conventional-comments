@@ -48,29 +48,48 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.addEventListener('keyup', (e) => {
-  if (currentStage !== STAGE.INACTIVE) return;
-  if (e.key !== '!') return;
+  if (currentStage === STAGE.SELECTING_DECORATION) return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp' || e.key === 'Enter' || e.key === 'Escape' || e.key === 'Control' || e.ctrlKey) {
+    return;
+  }
 
   const target = document.activeElement;
-  if (!target) return;
+  if (!target) {
+    cleanup();
+    return;
+  }
 
   const isTextarea = target.tagName.toLowerCase() === 'textarea';
   const isContentEditable = target.isContentEditable;
-  if (!isTextarea && !isContentEditable) return;
+  if (!isTextarea && !isContentEditable) {
+    cleanup();
+    return;
+  }
 
   activeEditor = target;
   const { text } = getEditorState(activeEditor);
 
-  if (text.trim() === '!') {
-    triggerIndex = text.indexOf('!');
+  triggerIndex = text.indexOf('!');
+
+  if (triggerIndex !== 0) {
+    cleanup();
+    return;
+  }
+
+  const query = text.substring(triggerIndex + 1);
+  const filteredLabels = commentTypes.filter(c => c.label.startsWith(query.toLowerCase()));
+
+  if (filteredLabels.length > 0) {
     currentStage = STAGE.SELECTING_LABEL;
-    showSuggestions(commentTypes);
+    showSuggestions(filteredLabels);
+  } else {
+    cleanup();
   }
 });
 
 function handleEnter() {
-  const items = suggestionsPopup.querySelectorAll('li');
-  const selectedItem = items[activeSuggestionIndex];
+  if (!suggestionsPopup) return;
+  const selectedItem = suggestionsPopup.querySelector('li.active');
   if (!selectedItem) return;
 
   if (currentStage === STAGE.SELECTING_LABEL) {
@@ -94,7 +113,9 @@ function handleEscape() {
 }
 
 function insertSnippet(snippet) {
-  const { cursorPosition } = getEditorState(activeEditor);
+  const { text, cursorPosition } = getEditorState(activeEditor);
+  const textBefore = text.substring(0, triggerIndex);
+  const textAfter = text.substring(cursorPosition);
 
   if (activeEditor.isContentEditable) {
     const selection = window.getSelection();
@@ -109,11 +130,8 @@ function insertSnippet(snippet) {
     selection.removeAllRanges();
     selection.addRange(range);
   } else {
-    const { value } = activeEditor;
-    const textBefore = value.substring(0, triggerIndex);
-    const textAfter = value.substring(cursorPosition);
     activeEditor.value = textBefore + snippet + textAfter;
-    const newCursorPos = triggerIndex + snippet.length;
+    const newCursorPos = (textBefore + snippet).length;
     activeEditor.selectionStart = newCursorPos;
     activeEditor.selectionEnd = newCursorPos;
   }
@@ -146,6 +164,7 @@ function showSuggestions(items) {
     suggestionsPopup = document.createElement('div');
     suggestionsPopup.id = 'conventional-comment-popup';
     document.body.appendChild(suggestionsPopup);
+    positionPopup();
   }
 
   activeSuggestionIndex = 0;
@@ -165,8 +184,6 @@ function showSuggestions(items) {
       handleEnter();
     });
   });
-
-  positionPopup();
 }
 
 function updateActiveSuggestion(direction) {
