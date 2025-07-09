@@ -11,6 +11,7 @@ const commentTypes = [
 ];
 
 const decorations = [
+  { label: 'none', description: 'Do not add any decoration.' },
   { label: '(non-blocking)', description: 'Should not prevent the subject from being accepted.' },
   { label: '(blocking)', description: 'Should prevent the subject from being accepted until resolved.' },
   { label: '(if-minor)', description: 'Resolve only if the changes end up being minor or trivial.' },
@@ -98,7 +99,12 @@ function handleEnter() {
     showSuggestions(decorations);
   } else if (currentStage === STAGE.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label;
-    const snippet = `**${selectedLabel} ${selectedDecoration}:** `;
+    let snippet;
+    if (selectedDecoration === 'none') {
+      snippet = `**${selectedLabel}:** `;
+    } else {
+      snippet = `**${selectedLabel} ${selectedDecoration}:** `;
+    }
     insertSnippet(snippet);
   }
 }
@@ -113,8 +119,14 @@ function handleEscape() {
 }
 
 function insertSnippet(snippet) {
+  if (!activeEditor) {
+    cleanup();
+    return;
+  }
+
   const { text, cursorPosition } = getEditorState(activeEditor);
   const textBefore = text.substring(0, triggerIndex);
+
   const textAfter = text.substring(cursorPosition);
 
   if (activeEditor.isContentEditable) {
@@ -164,8 +176,9 @@ function showSuggestions(items) {
     suggestionsPopup = document.createElement('div');
     suggestionsPopup.id = 'conventional-comment-popup';
     document.body.appendChild(suggestionsPopup);
-    positionPopup();
   }
+
+  positionPopup();
 
   activeSuggestionIndex = 0;
   suggestionsPopup.innerHTML = `
