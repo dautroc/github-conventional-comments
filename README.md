@@ -7,7 +7,10 @@
 - Type text to filter
 - Up/Down or Ctrl+j/k to navigate
 - Enter to accept
-- Esc to close popup
+- Esc to cancel
 
-### Roadmap
-- [ ] Support new github UI
+### Feature
+- Work with new github UI experimental
+- Support dark mode
+- Type to filter 
+- Separated labels and decorations
