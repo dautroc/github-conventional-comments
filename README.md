@@ -11,5 +11,3 @@
 
 ### Roadmap
 - [ ] Support new github UI
-- [ ] Support more decorations
-
