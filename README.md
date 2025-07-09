@@ -9,6 +9,8 @@
 - Enter to accept
 - Esc to close popup
 
-### Limitation
-- Doesn't support new experiment github UI
+### Roadmap
+- [ ] Support new github UI
+- [ ] Support dark mode
+- [ ] Support more decorations
 
