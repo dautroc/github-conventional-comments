@@ -3,11 +3,14 @@
   "version": "1.0",
   "description": "Suggests conventional comments on GitHub when you type '!'",
   "manifest_version": 3,
+  "background": {
+    "type": "module"
+  },
   "content_scripts": [
     {
       "matches": ["*://*.github.com/*"],
       "css": ["styles.css"],
-      "js": ["content.js"]
+      "js": ["main.js"]
     }
   ]
 }

@@ -1,0 +1,80 @@
+// Variables
+$popup-bg-light: #ffffff;
+$popup-bg-dark: #1c2128;
+$popup-border-light: #d0d7de;
+$popup-border-dark: #444c56;
+$popup-shadow-light: rgba(140, 149, 159, 0.2);
+$popup-shadow-dark: rgba(1, 4, 9, 0.8);
+$text-color-light: #1f2328;
+$text-color-dark: #adbac7;
+$hover-bg-light: #f6f8fa;
+$hover-bg-dark: #2d333b;
+$active-bg-light: #0969da;
+$active-bg-dark: #1f6feb;
+$active-text-color: white;
+$font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
+  sans-serif;
+$font-size: 14px;
+$border-radius: 6px;
+$item-border-radius: 4px;
+
+// Main popup styles
+#conventional-comment-popup {
+  position: absolute;
+  background-color: $popup-bg-light;
+  border: 1px solid $popup-border-light;
+  border-radius: $border-radius;
+  box-shadow: 0 8px 24px $popup-shadow-light;
+  z-index: 100;
+  min-width: 300px;
+  max-width: 400px;
+  font-family: $font-family;
+  font-size: $font-size;
+  color: $text-color-light;
+
+  ul {
+    list-style: none;
+    padding: 4px;
+    margin: 0;
+  }
+
+  li {
+    padding: 8px 12px;
+    border-radius: $item-border-radius;
+    cursor: pointer;
+    display: block;
+
+    &:hover {
+      background-color: $hover-bg-light;
+    }
+
+    &.active {
+      background-color: $active-bg-light;
+      color: $active-text-color;
+    }
+
+    strong {
+      font-weight: 600;
+      margin-right: 8px;
+    }
+  }
+}
+
+// Dark mode styles
+[data-color-mode="dark"] #conventional-comment-popup {
+  background-color: $popup-bg-dark;
+  border: 1px solid $popup-border-dark;
+  color: $text-color-dark;
+  box-shadow: 0 8px 24px $popup-shadow-dark;
+
+  li {
+    &:hover {
+      background-color: $hover-bg-dark;
+    }
+
+    &.active {
+      background-color: $active-bg-dark;
+      color: $active-text-color;
+    }
+  }
+}
