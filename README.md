@@ -11,6 +11,5 @@
 
 ### Roadmap
 - [ ] Support new github UI
-- [ ] Support dark mode
 - [ ] Support more decorations
 
