@@ -1,0 +1,22 @@
+{
+  "categories": [
+    {
+      "title": "## 🚀 Features",
+      "labels": ["enhancement"]
+    },
+    {
+      "title": "## 🐛 Bug Fixes",
+      "labels": ["bug"]
+    }
+  ],
+  "ignore_labels": ["ignore"],
+  "sort": "ASC",
+  "template": "${{CHANGELOG}}",
+  "pr_template": "- ${{TITLE}} (#${{NUMBER}})",
+  "empty_template": "- no changes",
+  "max_tags_to_fetch": 200,
+  "max_pull_requests": 200,
+  "max_back_track_time_days": 365,
+  "base_branches": ["main"],
+  "transformers": []
+}
