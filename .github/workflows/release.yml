@@ -1,0 +1,76 @@
+name: Release
+run-name: Release ${{ github.ref_name }}
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Parse Tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const tag = context.ref.replace('refs/tags/', '')
+            core.exportVariable('tag', tag)
+
+      - name: Prepare changelog
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const template = require('./.github/workflows/changelog.template.json')
+            template["base_branches"] = ["${{ secrets.MAIN_BRANCH }}"]
+            const fs = require('fs')
+            fs.writeFileSync('./.github/workflows/changelog.json', JSON.stringify(template))
+
+      - name: Install dependencies
+        run: npm i
+
+      - name: Build Extension
+        run: npm run build
+
+      - name: Zip extension
+        run: zip -r extension.zip extension/
+
+      - name: Generate Changelog
+        id: Changelog
+        uses: mikepenz/release-changelog-builder-action@v1
+        with:
+          configuration: ".github/workflows/changelog.json"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.tag }}
+          release_name: ${{ env.tag }}
+          body: |
+            ${{ steps.Changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
+
+      - name: Upload ZIP to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./extension.zip
+          asset_name: extension.zip
+          asset_content_type: application/zip
