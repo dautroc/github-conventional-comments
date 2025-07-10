@@ -7,7 +7,7 @@
     {
       "matches": ["*://*.github.com/*"],
       "css": ["styles.css"],
-      "js": ["content.js"]
+      "js": ["main.js"]
     }
   ]
 }
