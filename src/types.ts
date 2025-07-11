@@ -1,6 +1,7 @@
 export interface CommentType {
   label: string;
   description: string;
+  decorations?: string[];
 }
 
 export interface Decoration {
@@ -17,4 +18,5 @@ export enum Stage {
   INACTIVE = 0,
   SELECTING_LABEL = 1,
   SELECTING_DECORATION = 2,
+  BUTTON_UI,
 }
