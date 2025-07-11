@@ -31,7 +31,20 @@ function onPressEnter(): void {
     selectedLabel = selectedItem.dataset.label || "";
     currentStage = Stage.SELECTING_DECORATION;
     activeEditor?.blur();
-    showSuggestions(DECORATIONS);
+
+    const decorations =
+      COMMENT_TYPES.find((d) => d.label === selectedLabel)?.decorations || [];
+    const decorationsWithDescription = decorations.map(
+      (item) => DECORATIONS.find((d) => d.label === item)!
+    );
+
+    if (decorationsWithDescription.length > 0) {
+      showSuggestions(decorationsWithDescription);
+    } else {
+      currentStage = Stage.SELECTING_DECORATION;
+      selectedItem.dataset.label = "none";
+      onPressEnter();
+    }
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
     let snippet: string;

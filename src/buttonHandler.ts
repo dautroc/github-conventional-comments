@@ -9,9 +9,9 @@ let observedNode: HTMLElement | null;
 let buttonBar: HTMLDivElement | null;
 let activeForm: HTMLFormElement | null;
 let formSubmitHandler: (() => void) | null;
+let selectedLabel: string;
 let selectedDecoration: string;
 let activeEditorWrapper: HTMLDivElement | null;
-let selectedLabel: string;
 let snippet: string;
 
 // -- State --
@@ -23,9 +23,9 @@ function initState() {
   buttonBar = null;
   activeForm = null;
   formSubmitHandler = null;
+  selectedLabel = "";
   selectedDecoration = "";
   activeEditorWrapper = null;
-  selectedLabel = "";
   snippet = "";
 }
 
@@ -300,11 +300,49 @@ function handleFocusIn(e: FocusEvent) {
 }
 
 function handleInput(e: Event) {
-  const target = e.target as HTMLTextAreaElement;
+  // If the snippet is changed by other source, we need to update the UI
+  const target = e.target as HTMLTextAreaElement | HTMLElement;
   if (!target) return;
 
-  snippet = target.value;
-  console.log(snippet);
+  const { text } = getEditorState(target);
+  snippet = text;
+
+  // Parse existing snippet to update selectedLabel and selectedDecoration
+  const prefixRegex = /^\*\*([^(]+?)(?:\s*\(([^)]+)\))?\s*:\s*/;
+  const match = snippet.match(prefixRegex);
+
+  if (match) {
+    const label = match[1].trim();
+    const decoration = match[2] ? match[2].trim() : "";
+
+    // Validate label exists in COMMENT_TYPES
+    const commentType = COMMENT_TYPES.find((c) => c.label === label);
+    const decorationType = commentType?.decorations?.find(
+      (d) => d === `(${decoration})` // Regex will match non-blocking instead of (non-blocking)
+    );
+    if (commentType) {
+      selectedLabel = label;
+
+      // Update UI to reflect current state
+      if (buttonBar) {
+        if (decorationType) {
+          selectedDecoration = decorationType;
+          renderDecorationButtons(buttonBar, selectedLabel, decorationType);
+        } else {
+          renderLabelButtons(buttonBar, selectedLabel);
+        }
+      }
+    }
+  } else {
+    // No valid snippet found, reset state
+    selectedLabel = "";
+    selectedDecoration = "";
+
+    // Update UI to show default state
+    if (buttonBar) {
+      renderLabelButtons(buttonBar);
+    }
+  }
 }
 
 // -- Setup --

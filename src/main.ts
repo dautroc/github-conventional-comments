@@ -16,9 +16,12 @@ function checkIfGithubPullRequest() {
 chrome.storage.sync.get({ triggerMode: "buttons" }, (data) => {
   // Only initialize if we're on a GitHub pull request page
   if (checkIfGithubPullRequest()) {
-    if (data.triggerMode === "buttons") {
+    if (data.triggerMode === "both") {
       setupButtonHandler();
-    } else {
+      setupInputHandler();
+    } else if (data.triggerMode === "buttons") {
+      setupButtonHandler();
+    } else if (data.triggerMode === "trigger") {
       setupInputHandler();
     }
   }
