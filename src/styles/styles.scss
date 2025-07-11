@@ -43,7 +43,7 @@ html[data-color-mode="dark"] {
 }
 
 #conventional-comment-popup li {
-  padding: 8px 12px;
+  padding: 6px 8px;
   border-radius: 4px;
   cursor: pointer;
   display: block;
@@ -60,7 +60,20 @@ html[data-color-mode="dark"] {
 
 #conventional-comment-popup li strong {
   font-weight: 600;
-  margin-right: 8px;
+}
+
+.popup-header {
+  padding: 8px 8px 0px 8px;
+  font-weight: bold;
+}
+
+.type-badge {
+  background-color: #a3c1d1;
+  color: var(--c-text-color);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  text-transform: uppercase;
 }
 
 .cc-wrapper {
