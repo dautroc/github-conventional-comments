@@ -102,11 +102,13 @@ function handleInput(e: Event) {
   }
 
   activeEditor = target;
-  const { text } = getEditorState(activeEditor);
+  const { text, cursorPosition } = getEditorState(activeEditor);
 
-  triggerIndex = text.indexOf("!");
+  triggerIndex = text.substring(0, cursorPosition).lastIndexOf("!");
 
-  if (triggerIndex !== 0) {
+  const commentTypesInjected = COMMENT_TYPES.some(({ label }) => text.startsWith(`**${label}`));
+
+  if (triggerIndex < 0 || commentTypesInjected) {
     // If user is typing something else and a popup is open, close it.
     if (suggestionsPopup) {
       cleanup();
@@ -123,7 +125,10 @@ function handleInput(e: Event) {
     }
   }
 
-  const query = text.substring(triggerIndex + 1);
+  const regex = /\s/g;
+  regex.lastIndex = triggerIndex;
+  const nextLineIdx = regex.exec(text)?.index ?? text.length;
+  const query = text.substring(triggerIndex + 1, Math.max(triggerIndex + 1, nextLineIdx, cursorPosition));
   const filteredLabels = COMMENT_TYPES.filter((c: CommentType) =>
     c.label.startsWith(query.toLowerCase())
   );
@@ -195,10 +200,12 @@ function insertSnippet(snippet: string): void {
     selection.addRange(range);
   } else {
     const textareaElement = activeEditor as HTMLTextAreaElement;
-    textareaElement.value = textBefore + snippet + textAfter;
-    const newCursorPos = (textBefore + snippet).length;
+    textareaElement.value = snippet + textBefore + textAfter;
+
+    const newCursorPos = snippet.length;
     textareaElement.selectionStart = newCursorPos;
     textareaElement.selectionEnd = newCursorPos;
+    textareaElement.scrollTop = 0;
   }
 
   activeEditor.focus();
