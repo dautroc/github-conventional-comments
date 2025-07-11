@@ -152,6 +152,7 @@ function handleEnter(): void {
   if (currentStage === Stage.SELECTING_LABEL) {
     selectedLabel = selectedItem.dataset.label || "";
     currentStage = Stage.SELECTING_DECORATION;
+    activeEditor?.blur();
     showSuggestions(DECORATIONS);
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
@@ -159,7 +160,7 @@ function handleEnter(): void {
     if (selectedDecoration === "none") {
       snippet = `**${selectedLabel}:** `;
     } else {
-      snippet = `**${selectedLabel} (${selectedDecoration}):** `;
+      snippet = `**${selectedLabel} ${selectedDecoration}:** `;
     }
     insertSnippet(snippet);
   }
@@ -382,6 +383,7 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
 
   activeSuggestionIndex = 0;
   suggestionsPopup.innerHTML = `
+    ${selectedLabel ? `<div class="popup-header"><span class="type-badge">${selectedLabel}</span></div>` : ''}
     <ul>
       ${items
         .map(
