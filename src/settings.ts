@@ -18,4 +18,4 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.storage.sync.set({ triggerMode: target.value });
     }
   });
-}); 
+});
