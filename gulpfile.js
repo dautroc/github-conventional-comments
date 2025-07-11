@@ -34,8 +34,8 @@ function styles() {
 }
 
 // Scripts
-function scripts() {
-  const mainBuild = gulp
+function mainScript() {
+  return gulp
     .src(paths.mainTs)
     .pipe(
       esbuild({
@@ -49,8 +49,10 @@ function scripts() {
       })
     )
     .pipe(gulp.dest(paths.dist));
+}
 
-  const settingsBuild = gulp
+function settingsScript() {
+  return gulp
     .src(paths.settingTs)
     .pipe(
       esbuild({
@@ -64,9 +66,9 @@ function scripts() {
       })
     )
     .pipe(gulp.dest(paths.dist));
-
-  return merge(mainBuild, settingsBuild);
 }
+
+const scripts = gulp.series(mainScript, settingsScript);
 
 // Copy files
 function copy() {
@@ -78,16 +80,17 @@ function copy() {
 // Watch
 function watch() {
   gulp.watch(paths.scss, styles);
-  gulp.watch([paths.mainTs, paths.settingTs], scripts);
+  gulp.watch("src/*.ts", scripts);
   gulp.watch([paths.manifest, paths.html], copy);
 }
 
 // Build tasks
-const build = gulp.series(clean, gulp.parallel(styles, scripts, copy));
+const build = gulp.series(clean, styles, scripts, copy);
 const dev = gulp.series(build, watch);
 
 // Exports
 exports.clean = clean;
+exports.scripts = scripts;
 exports.build = build;
 exports.dev = dev;
 exports.default = build;
