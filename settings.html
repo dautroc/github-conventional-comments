@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conventional Comment Settings</title>
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Settings</h1>
+      <p>Choose your preferred way to trigger comments.</p>
+      <form id="settings-form">
+        <div class="setting-option">
+          <input
+            type="radio"
+            id="mode-buttons"
+            name="trigger-mode"
+            value="buttons"
+          />
+          <label for="mode-buttons">
+            <strong>Button UI</strong>
+            <span>Show buttons above the comment box.</span>
+          </label>
+        </div>
+        <div class="setting-option">
+          <input
+            type="radio"
+            id="mode-trigger"
+            name="trigger-mode"
+            value="trigger"
+          />
+          <label for="mode-trigger">
+            <strong>"!" Trigger</strong>
+            <span>Type '!' to show a popup menu.</span>
+          </label>
+        </div>
+      </form>
+    </div>
+    <script src="settings.js"></script>
+  </body>
+</html> 
