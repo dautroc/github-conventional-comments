@@ -1,27 +1,40 @@
 import { CommentType, Decoration } from "./types";
 
 export const COMMENT_TYPES: CommentType[] = [
-  { label: "praise", description: "Highlights something positive." },
-  { label: "nitpick", description: "A minor, non-critical issue." },
-  { label: "suggestion", description: "Suggests a specific improvement." },
   {
     label: "issue",
-    description: "Highlights a problem with the subject under review.",
+    description: "A problem or bug.",
+    decorations: ["(non-blocking)", "(blocking)", "(if-minor)"],
   },
-  { label: "todo", description: "A small, trivial, but necessary change." },
-  { label: "question", description: "Asks for clarification." },
+  {
+    label: "question",
+    description: "A question about the code.",
+    decorations: ["(blocking)"],
+  },
+  {
+    label: "suggestion",
+    description: "A suggestion for improvement.",
+    decorations: ["(if-minor)"],
+  },
+  {
+    label: "praise",
+    description: "Praise for well-written code.",
+    decorations: [],
+  },
+  {
+    label: "nitpick",
+    description: "A minor, non-critical style issue.",
+    decorations: ["(if-minor)"],
+  },
   {
     label: "thought",
-    description: "Represents an idea that popped up from reviewing.",
+    description: "A thought or exploration of an idea.",
+    decorations: [],
   },
   {
     label: "chore",
-    description:
-      'A simple task that must be done before the subject can be "officially" accepted.',
-  },
-  {
-    label: "note",
-    description: "Highlights something the reader should take note of.",
+    description: "A routine task or maintenance.",
+    decorations: ["(if-minor)"],
   },
 ];
 
