@@ -27,10 +27,15 @@ document.addEventListener(
     } else if (e.key === "ArrowUp" || (e.key === "k" && e.ctrlKey)) {
       e.preventDefault();
       updateActiveSuggestion(-1);
-    } else if (e.key === "Enter") {
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      handleEnter();
+    } else if (e.key === "Enter" && !e.shiftKey) {
+      if (
+        currentStage === Stage.SELECTING_LABEL ||
+        currentStage === Stage.SELECTING_DECORATION
+      ) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        handleEnter();
+      }
     } else if (e.key === "Escape") {
       e.preventDefault();
       handleEscape();
@@ -271,23 +276,13 @@ function updateCommentPrefix(snippet: string): void {
 
   const { text } = getEditorState(activeEditor);
   console.log("text", text);
-  // This simpler, structural regex finds the prefix based on your suggestion.
-  // It looks for a starting "**" and the first occurrence of ": " after it.
   const prefixRegex = /^\*\*.*:\**/;
-  // const text = "**issue(non-blocking):** ";
   const match = text.match(prefixRegex);
-
-  // console.log("match", match);
-  // console.log("snippet", snippet);
 
   let newText: string;
   if (match) {
-    // console.log("if");
-    // console.log(text.substring(match[0].length));
     newText = snippet + text.substring(match[0].length + 1);
   } else {
-    // console.log("else");
-    // console.log(text);
     newText = snippet + text;
   }
 
