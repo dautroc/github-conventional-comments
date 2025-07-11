@@ -84,21 +84,10 @@ document.addEventListener("focusin", (e: FocusEvent) => {
 });
 
 document.addEventListener("input", (e: Event): void => {
-  if (
-    currentStage === Stage.SELECTING_DECORATION ||
-    currentStage === Stage.BUTTON_UI
-  )
-    return;
+  if (currentStage === Stage.SELECTING_DECORATION) return;
 
   const target = e.target as HTMLElement;
   if (!target) {
-    cleanup();
-    return;
-  }
-
-  const isTextarea = target.tagName.toLowerCase() === "textarea";
-  const isContentEditable = target.isContentEditable;
-  if (!isTextarea && !isContentEditable) {
     cleanup();
     return;
   }
@@ -109,8 +98,20 @@ document.addEventListener("input", (e: Event): void => {
   triggerIndex = text.indexOf("!");
 
   if (triggerIndex !== 0) {
-    cleanup();
+    // If user is typing something else and a popup is open, close it.
+    if (suggestionsPopup) {
+      cleanup();
+    }
     return;
+  }
+
+  // User typed '!', so we want the popup.
+  // If the button bar is showing, we need to transition from buttons to popup.
+  if (buttonBar) {
+    cleanupButtonBar(); // Clean up buttons, but keep editor state.
+    if (activeEditor) {
+      activeEditor.focus(); // Refocus editor after DOM manipulation.
+    }
   }
 
   const query = text.substring(triggerIndex + 1);
@@ -122,6 +123,7 @@ document.addEventListener("input", (e: Event): void => {
     currentStage = Stage.SELECTING_LABEL;
     showSuggestions(filteredLabels);
   } else {
+    // If '!' is typed but there are no matches, just clean up everything.
     cleanup();
   }
 });
@@ -405,7 +407,7 @@ function positionPopup(): void {
   suggestionsPopup.style.left = `${window.scrollX + rect.left}px`;
 }
 
-function cleanup(): void {
+function cleanupButtonBar() {
   if (observer) {
     observer.disconnect();
     observer = null;
@@ -427,13 +429,18 @@ function cleanup(): void {
     activeEditorWrapper = null;
   }
 
-  if (suggestionsPopup) {
-    suggestionsPopup.remove();
-    suggestionsPopup = null;
-  }
   if (buttonBar) {
     buttonBar.remove();
     buttonBar = null;
+  }
+}
+
+function cleanup(): void {
+  cleanupButtonBar();
+
+  if (suggestionsPopup) {
+    suggestionsPopup.remove();
+    suggestionsPopup = null;
   }
   activeSuggestionIndex = 0;
   triggerIndex = -1;
