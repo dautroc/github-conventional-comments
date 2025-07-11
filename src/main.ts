@@ -48,9 +48,10 @@ document.addEventListener("input", (e: Event): void => {
   }
 
   activeEditor = target;
-  const { text } = getEditorState(activeEditor);
+  const { text, cursorPosition } = getEditorState(activeEditor);
 
-  triggerIndex = text.indexOf("!");
+  triggerIndex = text.substring(0, cursorPosition).lastIndexOf("!");
+
   const commentTypesInjected = COMMENT_TYPES.some(({ label }) => text.startsWith(`**${label}`));
 
   if (triggerIndex < 0 || commentTypesInjected) {
@@ -58,7 +59,10 @@ document.addEventListener("input", (e: Event): void => {
     return;
   }
 
-  const query = text.substring(triggerIndex + 1);
+  const regex = /\s/g;
+  regex.lastIndex = triggerIndex;
+  const nextLineIdx = regex.exec(text)?.index ?? text.length;
+  const query = text.substring(triggerIndex + 1, Math.max(triggerIndex + 1, nextLineIdx, cursorPosition));
   const filteredLabels = COMMENT_TYPES.filter((c: CommentType) =>
     c.label.startsWith(query.toLowerCase())
   );
