@@ -16,6 +16,15 @@ let observer: MutationObserver | null = null;
 let activeForm: HTMLFormElement | null = null;
 let formSubmitHandler: (() => void) | null = null;
 
+// Initialize the extension based on the user's saved setting.
+chrome.storage.sync.get({ triggerMode: "buttons" }, (data) => {
+  if (data.triggerMode === "buttons") {
+    document.addEventListener("focusin", handleFocusIn);
+  } else {
+    document.addEventListener("input", handleInput);
+  }
+});
+
 document.addEventListener(
   "keydown",
   (e: KeyboardEvent): void => {
@@ -44,7 +53,7 @@ document.addEventListener(
   true
 );
 
-document.addEventListener("focusin", (e: FocusEvent) => {
+function handleFocusIn(e: FocusEvent) {
   const target = e.target as HTMLElement;
   if (!target) return;
 
@@ -81,9 +90,9 @@ document.addEventListener("focusin", (e: FocusEvent) => {
   renderLabelButtons(buttonBar);
   buttonBar.addEventListener("click", handleButtonBarClick);
   setupCleanupListeners();
-});
+}
 
-document.addEventListener("input", (e: Event): void => {
+function handleInput(e: Event) {
   if (currentStage === Stage.SELECTING_DECORATION) return;
 
   const target = e.target as HTMLElement;
@@ -126,7 +135,7 @@ document.addEventListener("input", (e: Event): void => {
     // If '!' is typed but there are no matches, just clean up everything.
     cleanup();
   }
-});
+}
 
 function handleEnter(): void {
   if (!suggestionsPopup) return;
