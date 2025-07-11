@@ -198,8 +198,8 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
   `;
 
   suggestionsPopup.querySelectorAll("li").forEach((item, index) => {
-    item.addEventListener("click", () => {
-      activeSuggestionIndex = index;
+    item.addEventListener("mousedown", () => {
+      updateActiveSuggestion(index - activeSuggestionIndex);
       handleEnter();
     });
   });
