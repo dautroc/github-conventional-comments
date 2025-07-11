@@ -1,0 +1,41 @@
+html {
+  /* Add c(conventional) prefix to all colors to avoid conflicts with other styles */
+
+  /* Light mode colors */
+  --c-background-color: var(--bgColor-default, #ffffff);
+  --c-border-color: var(--borderColor-default, #d0d7de);
+  --c-text-color: var(--fgColor-default, #1f2328);
+  --c-shadow-color: var(--color-shadow-medium, rgba(140, 149, 159, 0.2));
+  --c-active-color: var(--bgColor-accent-emphasis, #0969da);
+  --c-active-text-color: var(--fgColor-onEmphasis, #ffffff);
+  --c-hover-color: var(--control-bgColor-hover, #f6f8fa);
+  --c-button-bg-color: var(--control-bgColor-rest, #f3f4f6);
+  --c-button-hover-bg-color: var(--control-bgColor-hover, #e5e7eb);
+  --c-button-text-color: var(--fgColor-muted, #374151);
+  --c-button-active-bg-color: var(--bgColor-accent-muted, #dbeafe);
+  --c-button-active-text-color: var(--fgColor-accent, #1e40af);
+  --c-breadcrumb-bg-color: var(--bgColor-accent-muted, #dbeafe);
+  --c-breadcrumb-hover-bg-color: var(--bgColor-accent-subtle, #bfdbfe);
+  --c-breadcrumb-text-color: var(--fgColor-accent, #1e40af);
+  --c-breadcrumb-separator-color: var(--fgColor-muted, #9ca3af);
+}
+
+/* Dark mode colors */
+html[data-color-mode="dark"] {
+  --c-background-color: var(--bgColor-default, #0d1117);
+  --c-border-color: var(--borderColor-default, #30363d);
+  --c-text-color: var(--fgColor-default, #e6edf3);
+  --c-shadow-color: var(--color-shadow-medium, rgba(1, 4, 9, 0.8));
+  --c-active-color: var(--bgColor-accent-emphasis, #1f6feb);
+  --c-active-text-color: var(--fgColor-onEmphasis, #ffffff);
+  --c-hover-color: var(--control-bgColor-hover, #21262d);
+  --c-button-bg-color: var(--control-bgColor-rest, #212830);
+  --c-button-hover-bg-color: var(--control-bgColor-hover, #262c36);
+  --c-button-text-color: var(--fgColor-muted, #9198a1);
+  --c-button-active-bg-color: var(--bgColor-accent-muted, #388bfd1a);
+  --c-button-active-text-color: var(--fgColor-accent, #4493f8);
+  --c-breadcrumb-bg-color: var(--bgColor-accent-muted, #388bfd1a);
+  --c-breadcrumb-hover-bg-color: var(--bgColor-accent-subtle, #3a8cfd5c);
+  --c-breadcrumb-text-color: var(--fgColor-accent, #4493f8);
+  --c-breadcrumb-separator-color: var(--fgColor-muted, #656c76);
+}
