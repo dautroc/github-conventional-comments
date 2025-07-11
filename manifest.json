@@ -4,8 +4,13 @@
   "description": "A browser extension to help you write conventional comments.",
   "manifest_version": 3,
   "permissions": ["storage"],
-  "action": {
-    "default_popup": "settings.html"
+  "icons": {
+    "16": "icon16.png",
+    "19": "icon19.png",
+    "32": "icon32.png",
+    "38": "icon38.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
   },
   "content_scripts": [
     {
@@ -13,5 +18,8 @@
       "css": ["styles.css"],
       "js": ["main.js"]
     }
-  ]
+  ],
+  "action": {
+    "default_popup": "setting_dialog.html"
+  }
 }

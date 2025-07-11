@@ -1,48 +1,93 @@
 const gulp = require("gulp");
-const sass = require("gulp-sass")(require("sass"));
+const sass = require("gulp-dart-sass");
+const cleanCSS = require("gulp-clean-css");
+const sourcemaps = require("gulp-sourcemaps");
 const del = require("del");
 const esbuild = require("gulp-esbuild");
+const merge = require("merge-stream");
 
+// Paths
 const paths = {
-  dist: "extension",
-  styles: "src/styles/**/*.scss",
-  scripts: ["src/main.ts", "src/settings.ts"],
+  scss: "src/styles/*.scss",
+  mainTs: "src/main.ts",
+  settingTs: "src/settings.ts",
+  html: "src/html/*.html",
+  icons: "icons/*",
   manifest: "manifest.json",
-  html: "settings.html",
+  dist: "extension/",
 };
 
-const clean = () => del([paths.dist]);
+// Clean
+function clean() {
+  return del([paths.dist]);
+}
 
-const stylesTask = () =>
-  gulp
-    .src(paths.styles)
+// Styles
+function styles() {
+  return gulp
+    .src(paths.scss)
+    .pipe(sourcemaps.init())
     .pipe(sass().on("error", sass.logError))
+    .pipe(cleanCSS())
+    .pipe(sourcemaps.write("."))
     .pipe(gulp.dest(paths.dist));
+}
 
-const scriptsTask = () =>
-  gulp
-    .src(paths.scripts)
+// Scripts
+function scripts() {
+  const mainBuild = gulp
+    .src(paths.mainTs)
     .pipe(
       esbuild({
+        outfile: "main.js",
         bundle: true,
-        sourcemap: "inline",
-        target: "es2020",
-        format: "iife", // This is the crucial setting we were missing.
-        // No 'outfile' is specified, so esbuild will create one file per entry point.
-        // e.g., 'src/main.ts' -> 'dist/main.js'
+        minify: true,
+        sourcemap: true,
+        target: "es2017",
+        format: "iife",
+        platform: "browser",
       })
     )
     .pipe(gulp.dest(paths.dist));
 
-const manifestTask = () =>
-  gulp.src(paths.manifest).pipe(gulp.dest(paths.dist));
+  const settingsBuild = gulp
+    .src(paths.settingTs)
+    .pipe(
+      esbuild({
+        outfile: "settings.js",
+        bundle: true,
+        minify: true,
+        sourcemap: true,
+        target: "es2017",
+        format: "iife",
+        platform: "browser",
+      })
+    )
+    .pipe(gulp.dest(paths.dist));
 
-const htmlTask = () => gulp.src(paths.html).pipe(gulp.dest(paths.dist));
+  return merge(mainBuild, settingsBuild);
+}
 
-const build = gulp.series(
-  clean,
-  gulp.parallel(stylesTask, scriptsTask, manifestTask, htmlTask)
-);
+// Copy files
+function copy() {
+  return gulp
+    .src([paths.manifest, paths.html, paths.icons], { encoding: false })
+    .pipe(gulp.dest(paths.dist));
+}
 
+// Watch
+function watch() {
+  gulp.watch(paths.scss, styles);
+  gulp.watch([paths.mainTs, paths.settingTs], scripts);
+  gulp.watch([paths.manifest, paths.html], copy);
+}
+
+// Build tasks
+const build = gulp.series(clean, gulp.parallel(styles, scripts, copy));
+const dev = gulp.series(build, watch);
+
+// Exports
+exports.clean = clean;
 exports.build = build;
+exports.dev = dev;
 exports.default = build;
