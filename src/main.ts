@@ -160,7 +160,7 @@ function handleEnter(): void {
     if (selectedDecoration === "none") {
       snippet = `**${selectedLabel}:** `;
     } else {
-      snippet = `**${selectedLabel} (${selectedDecoration}):** `;
+      snippet = `**${selectedLabel} ${selectedDecoration}:** `;
     }
     insertSnippet(snippet);
   }
