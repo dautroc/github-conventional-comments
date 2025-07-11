@@ -51,8 +51,9 @@ document.addEventListener("input", (e: Event): void => {
   const { text } = getEditorState(activeEditor);
 
   triggerIndex = text.indexOf("!");
+  const commentTypesInjected = COMMENT_TYPES.some(({ label }) => text.startsWith(`**${label}`));
 
-  if (triggerIndex !== 0) {
+  if (triggerIndex < 0 || commentTypesInjected) {
     cleanup();
     return;
   }
@@ -128,10 +129,12 @@ function insertSnippet(snippet: string): void {
     selection.addRange(range);
   } else {
     const textareaElement = activeEditor as HTMLTextAreaElement;
-    textareaElement.value = textBefore + snippet + textAfter;
-    const newCursorPos = (textBefore + snippet).length;
+    textareaElement.value = snippet + textBefore + textAfter;
+
+    const newCursorPos = snippet.length;
     textareaElement.selectionStart = newCursorPos;
     textareaElement.selectionEnd = newCursorPos;
+    textareaElement.scrollTop = 0;
   }
 
   activeEditor.focus();
