@@ -28,5 +28,5 @@ export function getEditorState(
 }
 
 export function generateSnippet(type: string, decorator: Decorator): string {
-  return !decorator.length || decorator === Decorator.NONE ? `**${type}:**` : `**${type} ${decorator}:**`;
+  return !decorator.length || decorator === Decorator.NONE ? `**${type}:** ` : `**${type} ${decorator}:** `;
 }
