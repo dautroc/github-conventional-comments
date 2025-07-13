@@ -1,4 +1,4 @@
-import { getEditorState } from "./common";
+import { generateSnippet, getEditorState } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { CommentType, Decoration, Stage, Decorator } from "./types";
 
@@ -48,12 +48,7 @@ function onPressEnter(): void {
     }
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
-    let snippet: string;
-    if (selectedDecoration === Decorator.NONE) {
-      snippet = `**${selectedLabel}:** `;
-    } else {
-      snippet = `**${selectedLabel} ${selectedDecoration}:** `;
-    }
+    let snippet = generateSnippet(selectedLabel, selectedDecoration as Decorator);
     insertSnippet(snippet);
   }
 }

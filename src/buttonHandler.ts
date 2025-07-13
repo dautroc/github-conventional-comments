@@ -1,4 +1,4 @@
-import { getEditorState } from "./common";
+import { generateSnippet, getEditorState } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { Decorator, Stage } from "./types";
 
@@ -84,7 +84,7 @@ function onButtonBarClick(e: MouseEvent) {
       renderDecorationButtons(buttonBar, label);
     } else {
       // No decorations, just insert label
-      const snippet = `**${label}:** `;
+      const snippet = generateSnippet(label, Decorator.NONE);
       updateCommentPrefix(snippet);
       renderLabelButtons(buttonBar, selectedLabel); // Re-render with active label
     }
@@ -97,7 +97,7 @@ function onButtonBarClick(e: MouseEvent) {
     if (!decoration || !selectedLabel) return;
     
     selectedDecoration = decoration;
-    const snippet = selectedDecoration !== Decorator.NONE ? `**${selectedLabel} ${selectedDecoration}:** ` : `**${selectedLabel}:** `;
+    const snippet = generateSnippet(selectedLabel, selectedDecoration as Decorator);
     updateCommentPrefix(snippet);
     renderDecorationButtons(buttonBar, selectedLabel, selectedDecoration);
     return;
