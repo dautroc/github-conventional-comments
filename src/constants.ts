@@ -1,56 +1,56 @@
-import { CommentType, Decoration } from "./types";
+import { CommentType, Decoration, Decorator, } from "./types";
 
 export const COMMENT_TYPES: CommentType[] = [
   {
-    label: "issue",
+    label: "Issue",
     description: "A problem or bug.",
-    decorations: ["(non-blocking)", "(blocking)", "(if-minor)"],
+    decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
   },
   {
-    label: "question",
+    label: "Question",
     description: "A question about the code.",
-    decorations: ["(blocking)"],
+    decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING],
   },
   {
-    label: "suggestion",
+    label: "Suggestion",
     description: "A suggestion for improvement.",
-    decorations: ["(if-minor)"],
+    decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
   },
   {
-    label: "praise",
+    label: "Praise",
     description: "Praise for well-written code.",
     decorations: [],
   },
   {
-    label: "nitpick",
+    label: "Nitpick",
     description: "A minor, non-critical style issue.",
-    decorations: ["(if-minor)"],
+    decorations: [],
   },
   {
-    label: "thought",
+    label: "Thought",
     description: "A thought or exploration of an idea.",
     decorations: [],
   },
   {
-    label: "chore",
+    label: "Chore",
     description: "A routine task or maintenance.",
-    decorations: ["(if-minor)"],
+    decorations: [Decorator.NONE, Decorator.IF_MINOR],
   },
 ];
 
 export const DECORATIONS: Decoration[] = [
-  { label: "none", description: "Do not add any decoration." },
+  { label: Decorator.NONE, description: "Do not add any decoration." },
   {
-    label: "(non-blocking)",
+    label: Decorator.NON_BLOCKING,
     description: "Should not prevent the subject from being accepted.",
   },
   {
-    label: "(blocking)",
+    label: Decorator.BLOCKING,
     description:
       "Should prevent the subject from being accepted until resolved.",
   },
   {
-    label: "(if-minor)",
+    label: Decorator.IF_MINOR,
     description: "Resolve only if the changes end up being minor or trivial.",
   },
 ];

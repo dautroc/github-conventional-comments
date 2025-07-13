@@ -1,6 +1,6 @@
 import { getEditorState } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
-import { CommentType, Decoration, Stage } from "./types";
+import { CommentType, Decoration, Stage, Decorator } from "./types";
 
 let currentStage: Stage;
 let activeEditor: HTMLTextAreaElement | HTMLElement | null;
@@ -8,6 +8,7 @@ let suggestionsPopup: HTMLDivElement | null;
 let triggerIndex: number;
 let activeSuggestionIndex: number;
 let selectedLabel: string;
+let filteredLabels: CommentType[];
 
 // -- State --
 function initState() {
@@ -17,6 +18,7 @@ function initState() {
   triggerIndex = -1;
   activeSuggestionIndex = 0;
   selectedLabel = "";
+  filteredLabels = [];
 }
 
 // -- Functions --
@@ -41,14 +43,13 @@ function onPressEnter(): void {
     if (decorationsWithDescription.length > 0) {
       showSuggestions(decorationsWithDescription);
     } else {
-      currentStage = Stage.SELECTING_DECORATION;
-      selectedItem.dataset.label = "none";
+      selectedItem.dataset.label = Decorator.NONE;
       onPressEnter();
     }
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
     let snippet: string;
-    if (selectedDecoration === "none") {
+    if (selectedDecoration === Decorator.NONE) {
       snippet = `**${selectedLabel}:** `;
     } else {
       snippet = `**${selectedLabel} ${selectedDecoration}:** `;
@@ -58,12 +59,22 @@ function onPressEnter(): void {
 }
 
 function onPressEscape(): void {
-  if (currentStage === Stage.SELECTING_DECORATION) {
-    const snippet = `**${selectedLabel}:** `;
-    insertSnippet(snippet);
-  } else {
-    cleanup();
-  }
+  activeEditor?.focus();
+  cleanup();
+}
+
+function onBackspaceOrDelete(e?: KeyboardEvent): void {
+  if (currentStage !== Stage.SELECTING_DECORATION) return;
+
+  e?.preventDefault();
+  resetFirstStage();
+}
+
+function resetFirstStage(): void {
+  selectedLabel = "";
+  activeEditor?.focus();
+  showSuggestions(filteredLabels);
+  currentStage = Stage.SELECTING_LABEL;
 }
 
 function updateActiveSuggestion(direction: number): void {
@@ -110,11 +121,8 @@ function insertSnippet(snippet: string): void {
     textareaElement.selectionStart = newCursorPos;
     textareaElement.selectionEnd = newCursorPos;
     textareaElement.scrollTop = 0;
-    setTimeout(() => {
-      textareaElement.focus();
-      textareaElement.setSelectionRange(newCursorPos, newCursorPos, "forward");
-    }, 200);
-    textareaElement.dispatchEvent(new Event("input", { bubbles: true }));
+    textareaElement.focus();
+    textareaElement.setSelectionRange(newCursorPos, newCursorPos, "forward");
   }
 
   cleanup();
@@ -158,6 +166,8 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
     </ul>
   `;
 
+  suggestionsPopup.getElementsByClassName("type-badge")[0]?.addEventListener("mousedown", resetFirstStage);
+
   suggestionsPopup.querySelectorAll("li").forEach((item, index) => {
     item.addEventListener("mousedown", () => {
       updateActiveSuggestion(index - activeSuggestionIndex);
@@ -191,7 +201,7 @@ function handleKeyDown(e: KeyboardEvent) {
   } else if (e.key === "ArrowUp" || (e.key === "k" && e.ctrlKey)) {
     e.preventDefault();
     updateActiveSuggestion(-1);
-  } else if (e.key === "Enter" && !e.shiftKey) {
+  } else if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
     if (
       currentStage === Stage.SELECTING_LABEL ||
       currentStage === Stage.SELECTING_DECORATION
@@ -203,6 +213,8 @@ function handleKeyDown(e: KeyboardEvent) {
   } else if (e.key === "Escape") {
     e.preventDefault();
     onPressEscape();
+  } else if (e.key === "Backspace" || e.key === "Delete") {
+    onBackspaceOrDelete(e);
   }
 }
 
@@ -239,8 +251,8 @@ function handleInput(e: Event) {
     triggerIndex + 1,
     Math.max(triggerIndex + 1, nextLineIdx, cursorPosition)
   );
-  const filteredLabels = COMMENT_TYPES.filter((c: CommentType) =>
-    c.label.startsWith(query.toLowerCase())
+  filteredLabels = COMMENT_TYPES.filter((c: CommentType) =>
+    c.label.toLowerCase().startsWith(query.toLowerCase())
   );
 
   if (filteredLabels.length > 0) {
