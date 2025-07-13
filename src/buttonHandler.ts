@@ -277,9 +277,7 @@ function handleFocusIn(e: FocusEvent) {
   }
 
   // Don't show a bar if one is already active or another flow is in progress
-  if (buttonBar || currentStage !== Stage.INACTIVE) {
-    checkSelectedOptions(target);
-    
+  if (buttonBar || currentStage !== Stage.INACTIVE) {    
     return;
   }
 

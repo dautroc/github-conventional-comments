@@ -118,6 +118,7 @@ function insertSnippet(snippet: string): void {
     textareaElement.scrollTop = 0;
     textareaElement.focus();
     textareaElement.setSelectionRange(newCursorPos, newCursorPos, "forward");
+    textareaElement.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
   cleanup();
