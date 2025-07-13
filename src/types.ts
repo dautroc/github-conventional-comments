@@ -22,7 +22,7 @@ export enum Stage {
 }
 
 export enum Decorator {
-  NONE = "_",
+  NONE = "none",
   BLOCKING = "(blocking)",
   NON_BLOCKING = "(non-blocking)",
   IF_MINOR = "(if-minor)",
