@@ -1,3 +1,4 @@
+import { COMMENT_TYPES } from "./constants";
 import { Decorator, EditorState } from "./types";
 
 export function getEditorState(
@@ -29,4 +30,8 @@ export function getEditorState(
 
 export function generateSnippet(type: string, decorator: Decorator): string {
   return !decorator.length || decorator === Decorator.NONE ? `**${type}:** ` : `**${type} ${decorator}:** `;
+}
+
+export function commentTypesInjected(text: string): boolean {
+  return COMMENT_TYPES.some(({ label }) => text.startsWith(`**${label}`));
 }

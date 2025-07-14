@@ -1,4 +1,4 @@
-import { generateSnippet, getEditorState } from "./common";
+import { commentTypesInjected, generateSnippet, getEditorState } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { CommentType, Decoration, Stage, Decorator } from "./types";
 
@@ -232,11 +232,7 @@ function handleInput(e: Event) {
 
   triggerIndex = text.substring(0, cursorPosition).lastIndexOf("!");
 
-  const commentTypesInjected = COMMENT_TYPES.some(({ label }) =>
-    text.startsWith(`**${label}`)
-  );
-
-  if (triggerIndex < 0 || commentTypesInjected) {
+  if (triggerIndex < 0 || commentTypesInjected(text)) {
     // If user is typing something else and a popup is open, close it.
     if (suggestionsPopup) {
       cleanup();
