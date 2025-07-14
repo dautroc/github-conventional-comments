@@ -1,61 +1,98 @@
 # GitHub Conventional Comments
 
-A Chrome extension that suggests conventional comments on GitHub.
+A browser extension that helps you write clear, actionable feedback on GitHub by suggesting conventional comment templates. Supports both Chrome and Chromium-based browsers.
+
+---
+
+## Demo
+
+TBU
+
+---
 
 ## Features
 
-- Type '!' in any GitHub comment field to trigger conventional comment suggestions
-- Navigate suggestions using arrow keys or Ctrl+j/k
-- Press Enter to select a suggestion
-- Press Escape to cancel or insert without decoration
-- Supports both light and dark modes
+- **Suggests Conventional Comments:**  
+  - Type `!` in any GitHub comment field to trigger a popup menu of comment types.
+  - Or, add a button bar above comment boxes to quickly select comment types.
+  - Choose your preferred trigger mode (popup, button bar, or both) in the extension settings.
+- **Keyboard Navigation:**  
+  - Move through suggestions using arrow keys or <kbd>Ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd>.
+  - <kbd>Enter</kbd> to select, <kbd>Escape</kbd> to discard.
+- **Decorations:**  
+  - Some types support decorations (e.g., “blocking”, “non-blocking”, “if-minor”) to clarify urgency.
+- **Light & Dark Theme:**  
+  - Matches your GitHub color scheme.
+- **Persistent Settings:**  
+  - Remembers your preferred trigger mode via browser storage.
 
-## Development
-
-This project uses npm, gulp, and TypeScript for building and development.
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-
-### Setup
-
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-### Build Commands
-
-- **Build for production**: `npm run build` (minified)
-- **Development mode**: `npm run dev` (unminified, auto-rebuild, watch for changes)
-- **Clean build files**: `npm run clean`
-
-### Installing the Extension
-
-1. Run `npm run dev` or `npm run build` to build the extension
-2. Open Chrome and go to `chrome://extensions/`
-3. Enable "Developer mode"
-4. Click "Load unpacked" and select the `extension/` folder
-
-## Usage
-
-1. Go to any GitHub page
-2. Click in a comment field or start a new comment
-3. Type '!' to trigger the suggestion popup
-4. Use arrow keys or Ctrl+j/k to navigate
-5. Press Enter to select a comment type
-6. Select a decoration (blocking/non-blocking) or press Escape for no decoration
+---
 
 ## Comment Types
 
-- **praise**: Highlights something positive
-- **nitpick**: A minor, non-critical issue
-- **suggestion**: Suggests a specific improvement
-- **issue**: Highlights a problem with the subject under review
-- **todo**: A small, trivial, but necessary change
-- **question**: Asks for clarification
-- **thought**: Represents an idea that popped up from reviewing
-- **chore**: A simple task that must be done before the subject can be "officially" accepted
-- **note**: Highlights something the reader should take note of
+| Type        | Description                              | Decorations                |
+|-------------|------------------------------------------|----------------------------|
+| **Issue**     | A problem or bug.                        | `none`, `blocking`, `non-blocking`, `if-minor` |
+| **Question**  | A question about the code.               | `none`, `blocking`, `non-blocking`     |
+| **Suggestion**| A suggestion for improvement.            | `none`, `blocking`, `non-blocking`, `if-minor` |
+| **Praise**    | Praise for well-written code.            | –                          |
+| **Nitpick**   | Minor, non-critical style issue.         | –                          |
+| **Thought**   | Exploration of an idea.                  | –                          |
+| **Chore**     | Routine task or maintenance.             | `none`, `if-minor`                   |
+
+---
+
+## Installation
+
+1. **Build the Extension:**
+   ```bash
+   npm install
+   npm run build
+   ```
+2. **Load into Chrome:**
+   - Go to `chrome://extensions/`
+   - Enable "Developer mode"
+   - Click "Load unpacked" and select the `extension/` folder in this project.
+
+---
+
+## Usage
+
+On any GitHub comment or review field:
+  - **Popup Menu:** Type `!` to open the suggestions popup.
+    - Navigate options with arrow keys / <kbd>Ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd>.
+    - Press <kbd>Enter</kbd> to insert a comment label (and choose a decoration if prompted).
+    - Press <kbd>Escape</kbd> to discard all.
+  - **Button Bar:** If enabled, click any label/decoration above the comment box.
+
+### Settings
+
+- Click the extension icon in your browser and open the settings dialog.
+- Choose your preferred trigger mode:
+  - **Button UI:** Always show label buttons.
+  - **"!" Trigger:** Use the popup by typing `!`.
+  - **Both:** Enable both triggers.
+
+---
+
+## Development
+
+This project uses TypeScript, gulp, and esbuild.
+
+### Build Commands
+
+- **Production build:**  
+  `npm run build`
+- **Development mode (watch):**  
+  `npm run dev`
+- **Clean build files:**  
+  `npm run clean`
+
+Build output is in the `extension/` directory.
+
+---
+
+## Release
+
+Automated release workflow is configured via GitHub Actions.  
+On new version tags (`v*.*.*`), the extension is built and zipped for release.
