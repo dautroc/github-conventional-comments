@@ -1,11 +1,11 @@
 export interface CommentType {
   label: string;
   description: string;
-  decorations?: string[];
+  decorations: Decorator[];
 }
 
 export interface Decoration {
-  label: string;
+  label: Decorator;
   description: string;
 }
 

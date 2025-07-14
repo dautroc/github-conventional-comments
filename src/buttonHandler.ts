@@ -1,4 +1,4 @@
-import { generateSnippet, getEditorState } from "./common";
+import { commentTypesInjected, generateSnippet, getEditorState } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { Decorator, Stage } from "./types";
 
@@ -319,7 +319,7 @@ function checkSelectedOptions(target: HTMLTextAreaElement | HTMLElement) {
   const prefixRegex = /^\*\*([^(]+?)(?:\s*\(([^)]+)\))?\s*:\s*/;
   const match = snippet.match(prefixRegex);
 
-  if (match) {
+  if (commentTypesInjected(snippet) && match) {
     const label = match[1].trim();
     const decoration = match[2] ? match[2].trim() : "";
 
@@ -357,6 +357,6 @@ function checkSelectedOptions(target: HTMLTextAreaElement | HTMLElement) {
 export function setup() {
   initState();
 
-  document.addEventListener("focusin", handleFocusIn);
+  document.addEventListener("focusin", handleFocusIn, true);
   document.addEventListener("input", handleInput);
 }
