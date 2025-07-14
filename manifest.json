@@ -14,9 +14,13 @@
   },
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
+      "matches": [
+        "https://github.com/*",
+        "https://*.github.com/*"
+      ],
       "css": ["styles.css"],
-      "js": ["main.js"]
+      "js": ["main.js"],
+      "run_at": "document_idle"
     }
   ],
   "action": {
