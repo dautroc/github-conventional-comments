@@ -357,6 +357,11 @@ function checkSelectedOptions(target: HTMLTextAreaElement | HTMLElement) {
 export function setup() {
   initState();
 
+  // Remove existing event listeners to avoid duplicates
+  document.removeEventListener("focusin", handleFocusIn, true);
+  document.removeEventListener("input", handleInput);
+
+  // Initialize event listeners
   document.addEventListener("focusin", handleFocusIn, true);
   document.addEventListener("input", handleInput);
 }
