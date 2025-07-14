@@ -1,6 +1,6 @@
-import { getEditorState } from "./common";
+import { generateSnippet, getEditorState } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
-import { Stage } from "./types";
+import { Decorator, Stage } from "./types";
 
 let activeEditor: HTMLTextAreaElement | HTMLElement | null;
 let currentStage: Stage;
@@ -84,7 +84,7 @@ function onButtonBarClick(e: MouseEvent) {
       renderDecorationButtons(buttonBar, label);
     } else {
       // No decorations, just insert label
-      const snippet = `**${label}:** `;
+      const snippet = generateSnippet(label, Decorator.NONE);
       updateCommentPrefix(snippet);
       renderLabelButtons(buttonBar, selectedLabel); // Re-render with active label
     }
@@ -95,9 +95,9 @@ function onButtonBarClick(e: MouseEvent) {
   if (target.matches(".cc-button[data-decoration]")) {
     const decoration = target.dataset.decoration;
     if (!decoration || !selectedLabel) return;
-
+    
     selectedDecoration = decoration;
-    const snippet = `**${selectedLabel} ${decoration}:** `;
+    const snippet = generateSnippet(selectedLabel, selectedDecoration as Decorator);
     updateCommentPrefix(snippet);
     renderDecorationButtons(buttonBar, selectedLabel, selectedDecoration);
     return;
@@ -277,7 +277,7 @@ function handleFocusIn(e: FocusEvent) {
   }
 
   // Don't show a bar if one is already active or another flow is in progress
-  if (buttonBar || currentStage !== Stage.INACTIVE) {
+  if (buttonBar || currentStage !== Stage.INACTIVE) {    
     return;
   }
 
@@ -297,6 +297,8 @@ function handleFocusIn(e: FocusEvent) {
   renderLabelButtons(buttonBar);
   buttonBar.addEventListener("click", onButtonBarClick);
   setupCleanupListeners();
+
+  checkSelectedOptions(target);
 }
 
 function handleInput(e: Event) {
@@ -304,6 +306,10 @@ function handleInput(e: Event) {
   const target = e.target as HTMLTextAreaElement | HTMLElement;
   if (!target) return;
 
+  checkSelectedOptions(target);
+}
+
+function checkSelectedOptions(target: HTMLTextAreaElement | HTMLElement) {
   const { text } = getEditorState(target);
   snippet = text;
 
@@ -318,7 +324,7 @@ function handleInput(e: Event) {
     // Validate label exists in COMMENT_TYPES
     const commentType = COMMENT_TYPES.find((c) => c.label === label);
     const decorationType = commentType?.decorations?.find(
-      (d) => d === `(${decoration})` // Regex will match non-blocking instead of (non-blocking)
+      (d) => !decoration.length ? d === Decorator.NONE : d === `(${decoration})` // Regex will match non-blocking instead of (non-blocking)
     );
     if (commentType) {
       selectedLabel = label;

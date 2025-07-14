@@ -20,3 +20,10 @@ export enum Stage {
   SELECTING_DECORATION = 2,
   BUTTON_UI,
 }
+
+export enum Decorator {
+  NONE = "none",
+  BLOCKING = "(blocking)",
+  NON_BLOCKING = "(non-blocking)",
+  IF_MINOR = "(if-minor)",
+}

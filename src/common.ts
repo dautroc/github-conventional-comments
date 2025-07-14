@@ -1,4 +1,4 @@
-import { EditorState } from "./types";
+import { Decorator, EditorState } from "./types";
 
 export function getEditorState(
   editor: HTMLTextAreaElement | HTMLElement
@@ -25,4 +25,8 @@ export function getEditorState(
       cursorPosition: textareaElement.selectionStart,
     };
   }
+}
+
+export function generateSnippet(type: string, decorator: Decorator): string {
+  return !decorator.length || decorator === Decorator.NONE ? `**${type}:** ` : `**${type} ${decorator}:** `;
 }
