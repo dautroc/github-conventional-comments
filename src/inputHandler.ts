@@ -162,10 +162,14 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
     </ul>
   `;
 
-  suggestionsPopup.getElementsByClassName("type-badge")[0]?.addEventListener("mousedown", resetFirstStage);
+  suggestionsPopup.getElementsByClassName("type-badge")[0]?.addEventListener("mousedown", (e) => {
+    e.preventDefault();
+    resetFirstStage();
+  });
 
   suggestionsPopup.querySelectorAll("li").forEach((item, index) => {
-    item.addEventListener("mousedown", () => {
+    item.addEventListener("mousedown", (e) => {
+      e.preventDefault();
       updateActiveSuggestion(index - activeSuggestionIndex);
       onPressEnter();
     });
