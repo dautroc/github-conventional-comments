@@ -1,6 +1,6 @@
 # GitHub Conventional Comments
 
-A Chrome extension extension that helps you write clear, actionable feedback on GitHub by suggesting conventional comment templates.
+A Chrome extension that helps you write clear, actionable feedback on GitHub by suggesting conventional comment templates.
 
 ---
 
