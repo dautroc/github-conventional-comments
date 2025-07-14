@@ -264,6 +264,12 @@ function handleInput(e: Event) {
 export function setup() {
   initState();
 
+  // Remove existing event listeners to avoid duplicates
+  document.removeEventListener("input", handleInput);
+  document.removeEventListener("keydown", handleKeyDown, true);
+  document.removeEventListener("click", handleClickOutside);
+
+  // Initialize event listeners
   document.addEventListener("input", handleInput);
   document.addEventListener("keydown", handleKeyDown, true);
   document.addEventListener("click", handleClickOutside);
