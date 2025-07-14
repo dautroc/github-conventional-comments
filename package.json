@@ -28,7 +28,6 @@
     "gulp-sass": "^5.1.0",
     "gulp-sourcemaps": "^2.6.5",
     "sass": "^1.70.0",
-    "typescript": "^5.3.3",
-    "merge-stream": "^2.0.0"
+    "typescript": "^5.3.3"
   }
 }

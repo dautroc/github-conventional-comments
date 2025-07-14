@@ -4,7 +4,6 @@ const cleanCSS = require("gulp-clean-css");
 const sourcemaps = require("gulp-sourcemaps");
 const del = require("del");
 const esbuild = require("gulp-esbuild");
-const merge = require("merge-stream");
 
 // Paths
 const paths = {
