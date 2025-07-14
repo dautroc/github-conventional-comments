@@ -299,6 +299,8 @@ function handleFocusIn(e: FocusEvent) {
   setupCleanupListeners();
 
   checkSelectedOptions(target);
+
+  activeEditor.focus();
 }
 
 function handleInput(e: Event) {
