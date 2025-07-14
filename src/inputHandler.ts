@@ -265,6 +265,6 @@ export function setup() {
   initState();
 
   document.addEventListener("input", handleInput);
-  document.addEventListener("keydown", handleKeyDown);
+  document.addEventListener("keydown", handleKeyDown, true);
   document.addEventListener("click", handleClickOutside);
 }
