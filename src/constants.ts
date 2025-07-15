@@ -17,11 +17,6 @@ export const COMMENT_TYPES: CommentType[] = [
     decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
   },
   {
-    label: "Praise",
-    description: "Praise for well-written code.",
-    decorations: [],
-  },
-  {
     label: "Nitpick",
     description: "A minor, non-critical style issue.",
     decorations: [],
@@ -29,6 +24,21 @@ export const COMMENT_TYPES: CommentType[] = [
   {
     label: "Thought",
     description: "A thought or exploration of an idea.",
+    decorations: [],
+  },
+  {
+    label: "Todo",
+    description: "An item needs to be done next.",
+    decorations: [],
+  },
+  {
+    label: "Note",
+    description: "Highlight or remind something.",
+    decorations: [],
+  },
+  {
+    label: "Praise",
+    description: "Praise for well-written code.",
     decorations: [],
   },
   {
