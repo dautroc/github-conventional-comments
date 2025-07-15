@@ -1,4 +1,4 @@
-import { commentTypesInjected, generateSnippet, getEditorState } from "./common";
+import { commentTypesInjected, generateSnippet, getEditorState, handleGlobalListener, insertSnippet } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { Decorator, Stage } from "./types";
 
@@ -85,7 +85,7 @@ function onButtonBarClick(e: MouseEvent) {
     } else {
       // No decorations, just insert label
       const snippet = generateSnippet(label, Decorator.NONE);
-      updateCommentPrefix(snippet);
+      if (activeEditor) insertSnippet(activeEditor, snippet);
       renderLabelButtons(buttonBar, selectedLabel); // Re-render with active label
     }
     return;
@@ -98,59 +98,10 @@ function onButtonBarClick(e: MouseEvent) {
     
     selectedDecoration = decoration;
     const snippet = generateSnippet(selectedLabel, selectedDecoration as Decorator);
-    updateCommentPrefix(snippet);
+    if (activeEditor) insertSnippet(activeEditor, snippet);
     renderDecorationButtons(buttonBar, selectedLabel, selectedDecoration);
     return;
   }
-}
-
-function updateCommentPrefix(snippet: string): void {
-  if (!activeEditor) {
-    return;
-  }
-
-  const { text } = getEditorState(activeEditor);
-  const prefixRegex = /^\*\*.*:\**/;
-  const match = text.match(prefixRegex);
-
-  let newText: string;
-  if (match) {
-    newText = snippet + text.substring(match[0].length + 1);
-  } else {
-    newText = snippet + text;
-  }
-
-  if (activeEditor.isContentEditable) {
-    activeEditor.textContent = newText;
-  } else {
-    (activeEditor as HTMLTextAreaElement).value = newText;
-  }
-
-  // Set cursor position
-  const newCursorPos = snippet.length;
-  if (activeEditor.isContentEditable) {
-    const selection = window.getSelection();
-    if (!selection) return;
-    const range = document.createRange();
-    const textNode = activeEditor.firstChild || document.createTextNode("");
-    if (textNode) {
-      range.setStart(
-        textNode,
-        Math.min(newCursorPos, textNode.textContent?.length || 0)
-      );
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  } else {
-    const textarea = activeEditor as HTMLTextAreaElement;
-    textarea.selectionStart = newCursorPos;
-    textarea.selectionEnd = newCursorPos;
-  }
-
-  activeEditor.focus();
-  // We no longer dispatch the event to prevent frameworks from overwriting our changes.
-  // activeEditor.dispatchEvent(new Event("input", { bubbles: true }));
 }
 
 function cleanup(): void {
@@ -265,9 +216,8 @@ function handleFocusIn(e: FocusEvent) {
   if (!target) return;
 
   const isTextarea = target.tagName.toLowerCase() === "textarea";
-  const isContentEditable = target.isContentEditable;
 
-  if (!isTextarea && !isContentEditable) {
+  if (!isTextarea) {
     return;
   }
 
@@ -358,10 +308,10 @@ export function setup() {
   initState();
 
   // Remove existing event listeners to avoid duplicates
-  document.removeEventListener("focusin", handleFocusIn, true);
-  document.removeEventListener("input", handleInput);
+  document.removeEventListener("focusin", (e) => handleGlobalListener(e, handleFocusIn), true);
+  document.removeEventListener("input", (e) => handleGlobalListener(e, handleInput));
 
   // Initialize event listeners
-  document.addEventListener("focusin", handleFocusIn, true);
-  document.addEventListener("input", handleInput);
+  document.addEventListener("focusin", (e) => handleGlobalListener(e, handleFocusIn), true);
+  document.addEventListener("input", (e) => handleGlobalListener(e, handleInput));
 }

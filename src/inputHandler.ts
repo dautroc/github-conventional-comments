@@ -1,4 +1,4 @@
-import { commentTypesInjected, generateSnippet, getEditorState } from "./common";
+import { commentTypesInjected, generateSnippet, getEditorState, handleGlobalListener, insertSnippet } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { CommentType, Decoration, Stage, Decorator } from "./types";
 
@@ -49,7 +49,8 @@ function onPressEnter(): void {
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
     let snippet = generateSnippet(selectedLabel, selectedDecoration as Decorator);
-    insertSnippet(snippet);
+    if (activeEditor) insertSnippet(activeEditor, snippet, triggerIndex);
+    cleanup();
   }
 }
 
@@ -82,46 +83,6 @@ function updateActiveSuggestion(direction: number): void {
   activeSuggestionIndex =
     (activeSuggestionIndex + direction + items.length) % items.length;
   items[activeSuggestionIndex].classList.add("active");
-}
-
-function insertSnippet(snippet: string): void {
-  if (!activeEditor) {
-    cleanup();
-    return;
-  }
-
-  const { text, cursorPosition } = getEditorState(activeEditor);
-  const textBefore = text.substring(0, triggerIndex);
-  const textAfter = text.substring(cursorPosition);
-
-  if (activeEditor.isContentEditable) {
-    const selection = window.getSelection();
-    if (!selection) return;
-
-    const range = selection.getRangeAt(0);
-    range.setStart(range.startContainer, triggerIndex);
-    range.setEnd(range.startContainer, cursorPosition);
-    range.deleteContents();
-    const textNode = document.createTextNode(snippet);
-    range.insertNode(textNode);
-    range.setStartAfter(textNode);
-    range.collapse(true);
-    selection.removeAllRanges();
-    selection.addRange(range);
-  } else {
-    const textareaElement = activeEditor as HTMLTextAreaElement;
-    textareaElement.value = snippet + textBefore + textAfter;
-
-    const newCursorPos = snippet.length;
-    textareaElement.selectionStart = newCursorPos;
-    textareaElement.selectionEnd = newCursorPos;
-    textareaElement.scrollTop = 0;
-    textareaElement.focus();
-    textareaElement.setSelectionRange(newCursorPos, newCursorPos, "forward");
-    textareaElement.dispatchEvent(new Event("input", { bubbles: true }));
-  }
-
-  cleanup();
 }
 
 function cleanup(): void {
@@ -265,12 +226,12 @@ export function setup() {
   initState();
 
   // Remove existing event listeners to avoid duplicates
-  document.removeEventListener("input", handleInput);
-  document.removeEventListener("keydown", handleKeyDown, true);
-  document.removeEventListener("click", handleClickOutside);
+  document.removeEventListener("input", (e) => handleGlobalListener(e, handleInput));
+  document.removeEventListener("keydown", (e) => handleGlobalListener(e, handleKeyDown), true);
+  document.removeEventListener("click", (e) => handleGlobalListener(e, handleClickOutside));
 
   // Initialize event listeners
-  document.addEventListener("input", handleInput);
-  document.addEventListener("keydown", handleKeyDown, true);
-  document.addEventListener("click", handleClickOutside);
+  document.addEventListener("input", (e) => handleGlobalListener(e, handleInput));
+  document.addEventListener("keydown", (e) => handleGlobalListener(e, handleKeyDown), true);
+  document.addEventListener("click", (e) => handleGlobalListener(e, handleClickOutside));
 }
