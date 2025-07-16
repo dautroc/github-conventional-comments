@@ -1,6 +1,7 @@
 import { commentTypesInjected, generateSnippet, getEditorState, handleGlobalListener, insertSnippet } from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { CommentType, Decoration, Stage, Decorator } from "./types";
+import { positionPopup } from "./position";
 
 let currentStage: Stage;
 let activeEditor: HTMLTextAreaElement | HTMLElement | null;
@@ -101,7 +102,7 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
     document.body.appendChild(suggestionsPopup);
   }
 
-  positionPopup();
+  positionPopup(activeEditor, suggestionsPopup);
 
   activeSuggestionIndex = 0;
   suggestionsPopup.innerHTML = `
@@ -135,14 +136,6 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
       onPressEnter();
     });
   });
-}
-
-function positionPopup(): void {
-  if (!activeEditor || !suggestionsPopup) return;
-
-  const rect = activeEditor.getBoundingClientRect();
-  suggestionsPopup.style.top = `${window.scrollY + rect.bottom + 5}px`;
-  suggestionsPopup.style.left = `${window.scrollX + rect.left}px`;
 }
 
 // -- Event Handlers --
