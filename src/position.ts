@@ -11,7 +11,6 @@ function createMirror(textarea: HTMLTextAreaElement): HTMLDivElement {
   mirror.style.left = '0';
   mirror.style.zIndex = '-1';
 
-  // Copy important styles
   const properties = [
     'fontFamily',
     'fontSize',
@@ -43,7 +42,6 @@ function getCaretPosition(textarea: HTMLTextAreaElement, triggerIndex: number): 
   const mirror = createMirror(textarea);
   const text = textarea.value.substring(0, triggerIndex);
 
-  // Create span to mark caret
   const span = document.createElement('span');
   span.textContent = '\u200b'; // zero-width space
   mirror.textContent = text;
@@ -81,7 +79,7 @@ function positionPopup(
 
   const caret = getCaretPosition(activeEditor, triggerIndex);
   const textareaRect = activeEditor.getBoundingClientRect();
-  const lineHeight = getLineHeight(activeEditor); // use helper as discussed
+  const lineHeight = getLineHeight(activeEditor);
 
   const scrollTop = (activeEditor as HTMLTextAreaElement).scrollTop;
   const scrollLeft = (activeEditor as HTMLTextAreaElement).scrollLeft;
