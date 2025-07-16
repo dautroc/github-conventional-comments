@@ -102,7 +102,7 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
     document.body.appendChild(suggestionsPopup);
   }
 
-  positionPopup(activeEditor, suggestionsPopup);
+  positionPopup(activeEditor, suggestionsPopup, triggerIndex);
 
   activeSuggestionIndex = 0;
   suggestionsPopup.innerHTML = `

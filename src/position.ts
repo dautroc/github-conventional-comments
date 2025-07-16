@@ -74,7 +74,8 @@ function getLineHeight(element: HTMLElement): number {
 
 function positionPopup(
   activeEditor: HTMLElement | HTMLTextAreaElement | null,
-  suggestionsPopup: HTMLDivElement | null
+  suggestionsPopup: HTMLDivElement | null,
+  triggerIndex: number
 ): void {
   if (!activeEditor || !suggestionsPopup) return;
 
@@ -82,9 +83,16 @@ function positionPopup(
   const textareaRect = activeEditor.getBoundingClientRect();
   const lineHeight = getLineHeight(activeEditor); // use helper as discussed
 
-  suggestionsPopup.style.top = `${window.scrollY + textareaRect.top + caret.top + lineHeight}px`;
+  const scrollTop = (activeEditor as HTMLTextAreaElement).scrollTop;
+  const scrollLeft = (activeEditor as HTMLTextAreaElement).scrollLeft;
 
-  suggestionsPopup.style.left = `${window.scrollX + textareaRect.left + caret.left}px`;
+  suggestionsPopup.style.top = `${
+    window.scrollY + textareaRect.top + caret.top - scrollTop + lineHeight
+  }px`;
+
+  suggestionsPopup.style.left = `${
+    window.scrollX + textareaRect.left + caret.left - scrollLeft
+  }px`;
 }
 
 export { positionPopup };
