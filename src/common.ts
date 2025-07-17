@@ -74,7 +74,20 @@ export function commentTypesInjected(text: string): boolean {
   return COMMENT_TYPES.some(({ label }) => text.startsWith(`**${label}`));
 }
 
+function checkIfGithubPullRequest() {
+  if (!window || !window.location) return false;
+  const hostname = window.location.hostname;
+  const pathname = window.location.pathname;
+
+  const isGitHub = hostname === "github.com" || hostname.includes("github");
+  const isPullRequest = /\/[^\/]+\/[^\/]+\/pull\/\d+/.test(pathname);
+
+  return isGitHub && isPullRequest;
+}
+
 export function handleGlobalListener<T extends Event>(e: T, executor: (_: T) => void): void {
+  if (!checkIfGithubPullRequest()) return;
+  
   const target = e.target as HTMLElement;
   if (target && !target.isContentEditable) executor(e);
 }
