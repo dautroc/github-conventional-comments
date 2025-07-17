@@ -199,7 +199,7 @@ function handleInput(e: Event) {
   const nextLineIdx = regex.exec(text)?.index ?? text.length;
   const query = text.substring(
     triggerIndex + 1,
-    Math.max(triggerIndex + 1, nextLineIdx, cursorPosition)
+    Math.max(triggerIndex + 1, Math.min(nextLineIdx, cursorPosition))
   );
   filteredLabels = COMMENT_TYPES.filter((c: CommentType) =>
     c.label.toLowerCase().startsWith(query.toLowerCase())
