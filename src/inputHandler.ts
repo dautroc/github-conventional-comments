@@ -110,7 +110,11 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
     suggestionsPopup = document.createElement("div");
     suggestionsPopup.id = "conventional-comment-popup";
     suggestionsPopup.setAttribute("popover", "manual");
-    document.body.appendChild(suggestionsPopup);
+    if (activeEditor) {
+      activeEditor.parentElement?.appendChild(suggestionsPopup);
+    } else {
+      document.body.appendChild(suggestionsPopup);
+    }
   }
 
   activeSuggestionIndex = 0;
