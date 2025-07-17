@@ -6,7 +6,7 @@
 
 A Chrome extension that brings conventional comments to GitHub, making code reviews clearer, faster, and more effective.
 
-![Demo GIF/Screenshot placeholder]()
+[](https://github.com/user-attachments/assets/6fbee7fa-6726-4360-a175-3cb36f2c3579)
 
 ## 🎯 Why Use Conventional Comments?
 
