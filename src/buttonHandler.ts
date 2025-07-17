@@ -127,10 +127,9 @@ function renderLabelButtons(
 
   COMMENT_TYPES.forEach((type) => {
     const button = document.createElement("button");
+    button.title = type.description || "";
     button.className = "cc-button";
-    if (type.label === activeLabel) {
-      button.classList.add("active");
-    }
+    if (type.label === activeLabel) button.classList.add("active");
     button.dataset.label = type.label;
     button.textContent = type.label;
     button.type = "button";
@@ -167,10 +166,9 @@ function renderDecorationButtons(
     DECORATIONS.filter((d) => decorationLabels.includes(d.label)).forEach(
       (d) => {
         const button = document.createElement("button");
+        button.title = d.description || "";
         button.className = "cc-button";
-        if (d.label === activeDecoration) {
-          button.classList.add("active");
-        }
+        if (d.label === activeDecoration) button.classList.add("active");
         button.dataset.decoration = d.label;
         button.textContent = d.label;
         button.type = "button";
