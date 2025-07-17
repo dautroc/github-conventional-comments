@@ -1,10 +1,16 @@
-import { commentTypesInjected, generateSnippet, getEditorState, handleGlobalListener, insertSnippet } from "./common";
+import {
+  commentTypesInjected,
+  generateSnippet,
+  getEditorState,
+  handleGlobalListener,
+  insertSnippet,
+} from "./common";
 import { COMMENT_TYPES, DECORATIONS } from "./constants";
 import { CommentType, Decoration, Stage, Decorator } from "./types";
 import { positionPopup } from "./position";
 
 let currentStage: Stage;
-let activeEditor: HTMLTextAreaElement | HTMLElement | null;
+let activeEditor: HTMLTextAreaElement | null;
 let suggestionsPopup: HTMLDivElement | null;
 let triggerIndex: number;
 let activeSuggestionIndex: number;
@@ -49,7 +55,10 @@ function onPressEnter(): void {
     }
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
-    let snippet = generateSnippet(selectedLabel, selectedDecoration as Decorator);
+    let snippet = generateSnippet(
+      selectedLabel,
+      selectedDecoration as Decorator
+    );
     if (activeEditor) insertSnippet(activeEditor, snippet, triggerIndex);
     cleanup();
   }
@@ -88,6 +97,7 @@ function updateActiveSuggestion(direction: number): void {
 
 function cleanup(): void {
   if (suggestionsPopup) {
+    suggestionsPopup.hidePopover();
     suggestionsPopup.remove();
   }
 
@@ -99,10 +109,9 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
   if (!suggestionsPopup) {
     suggestionsPopup = document.createElement("div");
     suggestionsPopup.id = "conventional-comment-popup";
+    suggestionsPopup.setAttribute("popover", "manual");
     document.body.appendChild(suggestionsPopup);
   }
-
-  positionPopup(activeEditor, suggestionsPopup, triggerIndex);
 
   activeSuggestionIndex = 0;
   suggestionsPopup.innerHTML = `
@@ -124,10 +133,18 @@ function showSuggestions(items: CommentType[] | Decoration[]): void {
     </ul>
   `;
 
-  suggestionsPopup.getElementsByClassName("type-badge")[0]?.addEventListener("mousedown", (e) => {
-    e.preventDefault();
-    resetFirstStage();
-  });
+  // Show the popover in the top layer
+  suggestionsPopup.showPopover();
+
+  // Position the popover after it's shown
+  positionPopup(activeEditor, suggestionsPopup, triggerIndex);
+
+  suggestionsPopup
+    .getElementsByClassName("type-badge")[0]
+    ?.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      resetFirstStage();
+    });
 
   suggestionsPopup.querySelectorAll("li").forEach((item, index) => {
     item.addEventListener("mousedown", (e) => {
@@ -181,7 +198,7 @@ function handleInput(e: Event) {
     return;
   }
 
-  activeEditor = target;
+  activeEditor = target as HTMLTextAreaElement;
   const { text, cursorPosition } = getEditorState(activeEditor);
 
   triggerIndex = text.substring(0, cursorPosition).lastIndexOf("!");
@@ -219,12 +236,28 @@ export function setup() {
   initState();
 
   // Remove existing event listeners to avoid duplicates
-  document.removeEventListener("input", (e) => handleGlobalListener(e, handleInput));
-  document.removeEventListener("keydown", (e) => handleGlobalListener(e, handleKeyDown), true);
-  document.removeEventListener("click", (e) => handleGlobalListener(e, handleClickOutside));
+  document.removeEventListener("input", (e) =>
+    handleGlobalListener(e, handleInput)
+  );
+  document.removeEventListener(
+    "keydown",
+    (e) => handleGlobalListener(e, handleKeyDown),
+    true
+  );
+  document.removeEventListener("click", (e) =>
+    handleGlobalListener(e, handleClickOutside)
+  );
 
   // Initialize event listeners
-  document.addEventListener("input", (e) => handleGlobalListener(e, handleInput));
-  document.addEventListener("keydown", (e) => handleGlobalListener(e, handleKeyDown), true);
-  document.addEventListener("click", (e) => handleGlobalListener(e, handleClickOutside));
+  document.addEventListener("input", (e) =>
+    handleGlobalListener(e, handleInput)
+  );
+  document.addEventListener(
+    "keydown",
+    (e) => handleGlobalListener(e, handleKeyDown),
+    true
+  );
+  document.addEventListener("click", (e) =>
+    handleGlobalListener(e, handleClickOutside)
+  );
 }

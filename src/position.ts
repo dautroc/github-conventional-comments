@@ -1,33 +1,32 @@
-
 function createMirror(textarea: HTMLTextAreaElement): HTMLDivElement {
-  const mirror = document.createElement('div');
+  const mirror = document.createElement("div");
   const style = getComputedStyle(textarea);
-  mirror.style.position = 'absolute';
-  mirror.style.visibility = 'hidden';
-  mirror.style.whiteSpace = 'pre-wrap';
-  mirror.style.wordWrap = 'break-word';
-  mirror.style.overflowWrap = 'break-word';
-  mirror.style.top = '0';
-  mirror.style.left = '0';
-  mirror.style.zIndex = '-1';
+  mirror.style.position = "absolute";
+  mirror.style.visibility = "hidden";
+  mirror.style.whiteSpace = "pre-wrap";
+  mirror.style.wordWrap = "break-word";
+  mirror.style.overflowWrap = "break-word";
+  mirror.style.top = "0";
+  mirror.style.left = "0";
+  mirror.style.zIndex = "-1";
 
   const properties = [
-    'fontFamily',
-    'fontSize',
-    'fontWeight',
-    'fontStyle',
-    'letterSpacing',
-    'lineHeight',
-    'paddingTop',
-    'paddingRight',
-    'paddingBottom',
-    'paddingLeft',
-    'borderTopWidth',
-    'borderRightWidth',
-    'borderBottomWidth',
-    'borderLeftWidth',
-    'boxSizing',
-    'width'
+    "fontFamily",
+    "fontSize",
+    "fontWeight",
+    "fontStyle",
+    "letterSpacing",
+    "lineHeight",
+    "paddingTop",
+    "paddingRight",
+    "paddingBottom",
+    "paddingLeft",
+    "borderTopWidth",
+    "borderRightWidth",
+    "borderBottomWidth",
+    "borderLeftWidth",
+    "boxSizing",
+    "width",
   ];
 
   for (const prop of properties) {
@@ -38,12 +37,15 @@ function createMirror(textarea: HTMLTextAreaElement): HTMLDivElement {
   return mirror;
 }
 
-function getCaretPosition(textarea: HTMLTextAreaElement, triggerIndex: number): { top: number, left: number } {
+function getCaretPosition(
+  textarea: HTMLTextAreaElement,
+  triggerIndex: number
+): { top: number; left: number } {
   const mirror = createMirror(textarea);
   const text = textarea.value.substring(0, triggerIndex);
 
-  const span = document.createElement('span');
-  span.textContent = '\u200b'; // zero-width space
+  const span = document.createElement("span");
+  span.textContent = "\u200b"; // zero-width space
   mirror.textContent = text;
   mirror.appendChild(span);
 
@@ -59,10 +61,10 @@ function getCaretPosition(textarea: HTMLTextAreaElement, triggerIndex: number): 
 }
 
 function getLineHeight(element: HTMLElement): number {
-  const temp = document.createElement('span');
-  temp.textContent = 'M';
-  temp.style.visibility = 'hidden';
-  temp.style.position = 'absolute';
+  const temp = document.createElement("span");
+  temp.textContent = "M";
+  temp.style.visibility = "hidden";
+  temp.style.position = "absolute";
   temp.style.font = window.getComputedStyle(element).font;
   document.body.appendChild(temp);
   const height = temp.offsetHeight;
@@ -71,7 +73,7 @@ function getLineHeight(element: HTMLElement): number {
 }
 
 function positionPopup(
-  activeEditor: HTMLElement | HTMLTextAreaElement | null,
+  activeEditor: HTMLTextAreaElement | null,
   suggestionsPopup: HTMLDivElement | null,
   triggerIndex: number
 ): void {
