@@ -1,7 +1,6 @@
 # 🎯 GitHub Conventional Comments
 
-[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/[your-extension-id].svg)](https://chrome.google.com/webstore/detail/[your-extension-id])
-[![Chrome Web Store Users](https://img.shields.io/chrome-web-store/users/[your-extension-id].svg)](https://chrome.google.com/webstore/detail/[your-extension-id])
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 > Transform vague feedback into actionable, structured code reviews! 💪
 
