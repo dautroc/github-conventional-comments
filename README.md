@@ -6,7 +6,7 @@
 
 A Chrome extension that brings conventional comments to GitHub, making code reviews clearer, faster, and more effective.
 
-[](https://github.com/user-attachments/assets/6fbee7fa-6726-4360-a175-3cb36f2c3579)
+[Demo](https://github.com/user-attachments/assets/634b3e03-8478-47c4-9336-fdc75247ba9a)
 
 ## 🎯 Why Use Conventional Comments?
 
@@ -48,6 +48,8 @@ Choose from a variety of purposeful comment types:
 - **Button Mode**: Quick-access buttons in the comment box
 - **Trigger Mode**: Type `!` to summon suggestions
 - **Hybrid Mode**: Use both for maximum flexibility
+
+[Choose your preference mode in settings](https://github.com/user-attachments/assets/d8fe7c6e-9226-4bb7-819b-f3927d43d0f4)
 
 ### 🎭 Comment Decorators
 Add context to your comments with decorators:
