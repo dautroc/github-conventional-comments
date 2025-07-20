@@ -65,7 +65,7 @@ Add context to your comments with decorators:
 
 ## 🚀 Quick Start
 
-1. Install from the [Chrome Web Store](your-extension-link)
+1. Install from the [Chrome Web Store](https://chromewebstore.google.com/detail/github-conventional-comme/kibokehdkbhonndicnpfehlcjejmjlpc)
 2. Navigate to any GitHub pull request or issue
 3. Choose your preferred interaction mode in extension settings:
    - Buttons only
