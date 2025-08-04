@@ -89,5 +89,14 @@ export function handleGlobalListener<T extends Event>(e: T, executor: (_: T) => 
   if (!checkIfGithubPullRequest()) return;
   
   const target = e.target as HTMLElement;
-  if (target && !target.isContentEditable) executor(e);
+
+  if (!target) return;
+
+  const isTextarea = target.tagName.toLowerCase() === "textarea";
+  const isCopilotChat = target.id === 'copilot-chat-textarea';
+
+  if ((e.type.includes("focus") || e.type.includes("input")) && (!isTextarea || isCopilotChat))
+    return;
+
+  if (!target.isContentEditable) executor(e);
 }
