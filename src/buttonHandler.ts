@@ -213,12 +213,6 @@ function handleFocusIn(e: FocusEvent) {
   const target = e.target as HTMLElement;
   if (!target) return;
 
-  const isTextarea = target.tagName.toLowerCase() === "textarea";
-
-  if (!isTextarea) {
-    return;
-  }
-
   // If we focus on a new editor, clean up the old bar
   if (activeEditor && activeEditor !== target) {
     cleanup();
