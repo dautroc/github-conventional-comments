@@ -4,7 +4,6 @@ const cleanCSS = require("gulp-clean-css");
 const sourcemaps = require("gulp-sourcemaps");
 const del = require("del");
 const esbuild = require("gulp-esbuild");
-const replace = require("gulp-replace");
 
 // Paths
 const paths = {
@@ -73,17 +72,7 @@ const scripts = gulp.series(mainScript, settingsScript);
 // Copy files
 function copy() {
   return gulp
-    .src([paths.html, paths.icons], { encoding: false })
-    .pipe(gulp.dest(paths.dist));
-}
-
-// Update manifest version
-function generateManifest() {
-  const version = process.env.VERSION || "0.0.0";
-  console.log("Updating manifest version to", version);
-  return gulp
-    .src(paths.manifest)
-    .pipe(replace(/\"version\": \"<version>\"/, `\"version\": \"${version}\"`))
+    .src([paths.manifest, paths.html, paths.icons], { encoding: false })
     .pipe(gulp.dest(paths.dist));
 }
 
@@ -95,7 +84,7 @@ function watch() {
 }
 
 // Build tasks
-const build = gulp.series(clean, styles, scripts, copy, generateManifest);
+const build = gulp.series(clean, styles, scripts, copy);
 const dev = gulp.series(build, watch);
 
 // Exports
