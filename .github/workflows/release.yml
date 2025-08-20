@@ -39,7 +39,7 @@ jobs:
         run: npm i
 
       - name: Set Version
-        run: echo "VERSION=${{ env.tag }}" | sed 's/^v//' >> $GITHUB_ENV
+        run: echo "VERSION=$(echo ${{ env.tag }} | sed 's/^v//')" >> $GITHUB_ENV
 
       - name: Build Extension
         run: npm run build
