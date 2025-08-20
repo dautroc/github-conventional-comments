@@ -78,16 +78,14 @@ function onButtonBarClick(e: MouseEvent) {
 
     selectedLabel = label;
     selectedDecoration = ""; // Reset on new label selection
-    const commentType = COMMENT_TYPES.find((c) => c.label === label);
+    const commentType = COMMENT_TYPES.find((c) => c.label === selectedLabel);
 
-    if (commentType?.decorations?.length) {
-      renderDecorationButtons(buttonBar, label);
-    } else {
-      // No decorations, just insert label
-      const snippet = generateSnippet(label, Decorator.NONE);
-      if (activeEditor) insertSnippet(activeEditor, snippet);
-      renderLabelButtons(buttonBar, selectedLabel); // Re-render with active label
-    }
+    if (commentType?.decorations?.length) renderDecorationButtons(buttonBar, selectedLabel);
+    else renderLabelButtons(buttonBar, selectedLabel);
+
+    const snippet = generateSnippet(label, Decorator.NONE);
+    if (activeEditor) insertSnippet(activeEditor, snippet);
+
     return;
   }
 

@@ -4,17 +4,17 @@ export const COMMENT_TYPES: CommentType[] = [
   {
     label: "Issue",
     description: "A problem or bug.",
-    decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
+    decorations: [Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
   },
   {
     label: "Question",
     description: "A question about the code.",
-    decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING],
+    decorations: [Decorator.BLOCKING, Decorator.NON_BLOCKING],
   },
   {
     label: "Suggestion",
     description: "A suggestion for improvement.",
-    decorations: [Decorator.NONE, Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
+    decorations: [Decorator.BLOCKING, Decorator.NON_BLOCKING, Decorator.IF_MINOR],
   },
   {
     label: "Nitpick",
@@ -44,9 +44,12 @@ export const COMMENT_TYPES: CommentType[] = [
   {
     label: "Chore",
     description: "A routine task or maintenance.",
-    decorations: [Decorator.NONE, Decorator.IF_MINOR],
+    decorations: [Decorator.IF_MINOR],
   },
-];
+].map((type) => ({
+  ...type,
+  decorations: type.decorations.length ? [Decorator.NONE, ...type.decorations] : [],
+}));
 
 export const DECORATIONS: Decoration[] = [
   { label: Decorator.NONE, description: "Do not add any decoration." },
