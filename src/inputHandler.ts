@@ -39,7 +39,7 @@ function onPressEnter(): void {
   if (currentStage === Stage.SELECTING_LABEL) {
     selectedLabel = selectedItem.dataset.label || "";
     currentStage = Stage.SELECTING_DECORATION;
-    activeEditor?.blur();
+    // Don't blur the editor - we need it to remain focused for keyboard events
 
     const decorations =
       COMMENT_TYPES.find((d) => d.label === selectedLabel)?.decorations || [];
@@ -50,8 +50,10 @@ function onPressEnter(): void {
     if (decorationsWithDescription.length > 0) {
       showSuggestions(decorationsWithDescription);
     } else {
-      selectedItem.dataset.label = Decorator.NONE;
-      onPressEnter();
+      // No decorations available, directly insert snippet with no decoration
+      let snippet = generateSnippet(selectedLabel, Decorator.NONE);
+      if (activeEditor) insertSnippet(activeEditor, snippet, triggerIndex);
+      cleanup();
     }
   } else if (currentStage === Stage.SELECTING_DECORATION) {
     const selectedDecoration = selectedItem.dataset.label || "";
