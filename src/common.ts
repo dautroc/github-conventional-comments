@@ -85,6 +85,38 @@ function checkIfGithubPullRequest() {
   return isGitHub && isPullRequest;
 }
 
+function isCommentTextarea(element: HTMLElement): boolean {
+  // Check if the element is a textarea
+  if (element.tagName.toLowerCase() !== "textarea") return false;
+  
+  // Exclude copilot chat textarea
+  if (element.id === 'copilot-chat-textarea') return false;
+  
+  // Exclude PR description and title edit areas specifically
+  if (element.name === "pull_request[body]" || 
+      element.name === "pull_request[title]" ||
+      element.id === "pull_request_body" ||
+      element.id === "pull_request_title") {
+    return false;
+  }
+  
+  // Exclude PR description forms by checking if it's in a previewable comment form
+  // but only if it's specifically for PR/issue body editing
+  const previewableForm = element.closest('.js-previewable-comment-form');
+  if (previewableForm) {
+    // Check if this is specifically a PR/issue body edit form
+    if (previewableForm.querySelector('[name="pull_request[body]"]') ||
+        previewableForm.querySelector('[name="issue[body]"]') ||
+        previewableForm.closest('.js-issue-update')) {
+      return false;
+    }
+  }
+  
+  // For all other textareas on GitHub PR pages, allow them
+  // This is more permissive but we'll rely on the specific exclusions above
+  return true;
+}
+
 export function handleGlobalListener<T extends Event>(e: T, executor: (_: T) => void): void {
   if (!checkIfGithubPullRequest()) return;
   
@@ -92,11 +124,8 @@ export function handleGlobalListener<T extends Event>(e: T, executor: (_: T) => 
 
   if (!target) return;
 
-  const isTextarea = target.tagName.toLowerCase() === "textarea";
-  const isCopilotChat = target.id === 'copilot-chat-textarea';
+  // Only proceed if the target is a comment textarea
+  if (!isCommentTextarea(target)) return;
 
-  if ((e.type.includes("focus") || e.type.includes("input")) && (!isTextarea || isCopilotChat))
-    return;
-
-  if (!target.isContentEditable) executor(e);
+  executor(e);
 }
